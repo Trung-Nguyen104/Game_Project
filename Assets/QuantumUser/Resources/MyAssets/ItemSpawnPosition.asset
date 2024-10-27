@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63ff28b50bfb54143bd2768915ccc63b, type: 3}
+  m_Name: ItemSpawnPosition
+  m_EditorClassIdentifier: 
+  Identifier:
+    Path: QuantumUser/Resources/MyAssets/ItemSpawnPosition
+    Guid:
+      Value: 378436883922357289
+  positions:
+  - X:
+      RawValue: -547225
+    Y:
+      RawValue: 290324
+  - X:
+      RawValue: 112721
+    Y:
+      RawValue: 333578
+  - X:
+      RawValue: 416808
+    Y:
+      RawValue: 245760
+  - X:
+      RawValue: -779223
+    Y:
+      RawValue: -349306
+  - X:
+      RawValue: 245760
+    Y:
+      RawValue: -353894
+  - X:
+      RawValue: 736624
+    Y:
+      RawValue: -26869
+  - X:
+      RawValue: -493486
+    Y:
+      RawValue: -31457
+  - X:
+      RawValue: -220856
+    Y:
+      RawValue: -387317
+  - X:
+      RawValue: 175636
+    Y:
+      RawValue: 385351
+  - X:
+      RawValue: 709099
+    Y:
+      RawValue: -263454
+  - X:
+      RawValue: -790364
+    Y:
+      RawValue: 261488
+  - X:
+      RawValue: 619315
+    Y:
+      RawValue: -74055
+  - X:
+      RawValue: -500039
+    Y:
+      RawValue: -47185
+  - X:
+      RawValue: -150732
+    Y:
+      RawValue: 125829
+  - X:
+      RawValue: 197918
+    Y:
+      RawValue: 26869

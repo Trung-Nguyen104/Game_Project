@@ -1,0 +1,144 @@
+input
+{
+	FPVector2 mousePosition;
+	Button PickUpItem;
+	Button DropItem;
+	Button InteracAction;
+	Button RightMouseClick;
+	Int32 SelectItem;
+}
+
+#define PLAYER_COUNT 8
+#pragma max_players PLAYER_COUNT
+
+global
+{
+	list<entity_ref> playerEntityRef;
+}
+
+component PlayerInfo
+{
+	player_ref PlayerRef;
+	PlayerRole PlayerRole;
+	Int32 PlayerSkinColor;
+
+	[Header("Inventory")]
+	array<ItemInfo>[4] Inventory;
+	bool HadWeapon;
+	Int32 CurrSelectItem;
+
+	[Header("Player Stats")]
+	FP Health;
+	FP Speed;
+}
+
+component MousePointerInfo
+{
+	FPVector2 targetPosition;
+	FP AimAngle;
+}
+
+component ItemInfo
+{
+	ItemProfile Item;
+	[Header("If Item Is Gun")]
+	FP GunAmmo;
+	AssetRef<EntityPrototype> BulletPrototype;
+}
+
+component ItemSpawner
+{
+	bool LoadAllPosition;
+	AssetRef<ItemSpawnPosition> ItemSpawnPosition;
+	array<Positions>[15] Positions;
+	array<ItemSpawn>[3] Item;
+}
+
+component BulletInfo
+{
+	player_ref OwnerPlayer;
+	FP Damage;
+	FP BulletTimeOut;
+}
+
+component PlayerRoleManager
+{
+	array<RoleProfile>[8] RoleProfiles;
+}
+
+singleton component GameSession
+{	
+	GameState GameState;
+}
+
+struct Positions
+{
+	FPVector2 Position;
+	bool isSpawned;
+}
+
+struct ItemSpawn
+{
+	ItemProfile ItemProfile;
+	Int32 ItemQuantity;
+}
+
+struct ItemProfile
+{
+	AssetRef<ItemData> ItemData;
+	AssetRef<EntityPrototype> ItemPrototype;
+}
+
+struct RoleProfile
+{
+	PlayerRole PlayerRole;
+	Int32 RoleQuantity;
+}
+
+enum PlayerRole
+{
+	None,
+	Monster,
+	Astronaut,
+	Couple, 
+	Scientist,
+	Soldier
+}
+
+enum GameState
+{
+	Waiting,
+	GameStarting,
+	GameStarted,
+	GameEnded,
+}
+
+event PickUpItem
+{
+	player_ref PlayerRef;
+	Int32 ItemSlotIndex;
+	AssetRef<ItemData> ItemPickUpData;
+}
+
+event SelectItem
+{
+	player_ref PlayerRef;
+	Int32 SelectItem;
+}
+
+event DropItem
+{
+	player_ref PlayerRef;
+	Int32 CurrSelectItem;
+	AssetRef<ItemData> ItemDropData;
+}
+
+event IsMoving 
+{
+	player_ref PlayerRef;
+	bool isMoving;
+}
+
+signal OnPickUpItem (FPVector2 Position);
+signal OnUseItem (ItemInfo ItemInfo);
+signal OnLoadPosition (FPVector2 Position);
