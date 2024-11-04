@@ -5,6 +5,8 @@ namespace Quantum
     public class InventoryView : QuantumEntityViewComponent
     {
         private PlayerInfo playerInfo;
+        private RuntimePlayer playerData;
+        private GameSession gameSession;
         private ItemSlotsView[] itemSlots;
 
         private int lastSelectItem;
@@ -23,7 +25,9 @@ namespace Quantum
         private void Update()
         {
             playerInfo = VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef);
-            SetActiveInventory();
+            playerData = VerifiedFrame.GetPlayerData(playerInfo.PlayerRef);
+            gameSession = VerifiedFrame.GetSingleton<GameSession>();
+            InventoryHandler();
         }
 
         private bool CheckPlayerLocal() => QuantumRunner.DefaultGame.PlayerIsLocal(playerInfo.PlayerRef);
@@ -95,17 +99,25 @@ namespace Quantum
             }
         }
 
-        private void SetActiveInventory()
+        private void InventoryHandler()
         {
-            var gameSession = VerifiedFrame.GetSingleton<GameSession>();
-            if (gameSession.GameState != GameState.GameStarted)
+            if (!CheckPlayerLocal())
             {
-                InventorySlot.Instance.gameObject.SetActive(false);
+                return;
+            }
+            if (gameSession.GameState != GameState.GameStarted || playerData.CurrHealth <= 0)
+            {
+                SetActiveInventory(false);
             }
             else
             {
-                InventorySlot.Instance.gameObject.SetActive(true);
+                SetActiveInventory(true);
             }
+        }
+
+        private void SetActiveInventory(bool boolValue)
+        {
+            InventorySlot.Instance.gameObject.SetActive(boolValue);
         }
     }
 }

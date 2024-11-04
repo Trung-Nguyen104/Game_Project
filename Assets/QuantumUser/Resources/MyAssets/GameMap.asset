@@ -316,22 +316,22 @@ MonoBehaviour:
       data:
         RoleProfiles:
         - PlayerRole:
-            Value: 2
-          RoleQuantity: 1
-        - PlayerRole:
-            Value: 5
-          RoleQuantity: 1
-        - PlayerRole:
-            Value: 3
-          RoleQuantity: 1
-        - PlayerRole:
             Value: 1
           RoleQuantity: 1
         - PlayerRole:
             Value: 0
           RoleQuantity: 1
         - PlayerRole:
-            Value: 4
+            Value: 0
+          RoleQuantity: 1
+        - PlayerRole:
+            Value: 0
+          RoleQuantity: 1
+        - PlayerRole:
+            Value: 5
+          RoleQuantity: 1
+        - PlayerRole:
+            Value: 0
           RoleQuantity: 1
         - PlayerRole:
             Value: 0

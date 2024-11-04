@@ -63,7 +63,7 @@ namespace Quantum {
         switch (eventID) {
           case EventPickUpItem.ID: result = typeof(EventPickUpItem); return;
           case EventSelectItem.ID: result = typeof(EventSelectItem); return;
-          case EventDropItem.ID: result = typeof(EventDropItem); return;
+          case EventRemoveItem.ID: result = typeof(EventRemoveItem); return;
           case EventIsMoving.ID: result = typeof(EventIsMoving); return;
           default: break;
         }
@@ -83,8 +83,8 @@ namespace Quantum {
         _f.AddEvent(ev);
         return ev;
       }
-      public EventDropItem DropItem(PlayerRef PlayerRef, Int32 CurrSelectItem, AssetRef<ItemData> ItemDropData) {
-        var ev = _f.Context.AcquireEvent<EventDropItem>(EventDropItem.ID);
+      public EventRemoveItem RemoveItem(PlayerRef PlayerRef, Int32 CurrSelectItem, AssetRef<ItemData> ItemDropData) {
+        var ev = _f.Context.AcquireEvent<EventRemoveItem>(EventRemoveItem.ID);
         ev.PlayerRef = PlayerRef;
         ev.CurrSelectItem = CurrSelectItem;
         ev.ItemDropData = ItemDropData;
@@ -156,15 +156,15 @@ namespace Quantum {
       }
     }
   }
-  public unsafe partial class EventDropItem : EventBase {
+  public unsafe partial class EventRemoveItem : EventBase {
     public new const Int32 ID = 3;
     public PlayerRef PlayerRef;
     public Int32 CurrSelectItem;
     public AssetRef<ItemData> ItemDropData;
-    protected EventDropItem(Int32 id, EventFlags flags) : 
+    protected EventRemoveItem(Int32 id, EventFlags flags) : 
         base(id, flags) {
     }
-    public EventDropItem() : 
+    public EventRemoveItem() : 
         base(3, EventFlags.Server|EventFlags.Client) {
     }
     public new QuantumGame Game {

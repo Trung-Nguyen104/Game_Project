@@ -58,10 +58,13 @@ namespace Quantum {
   public enum PlayerRole : int {
     None,
     Monster,
-    Astronaut,
-    Couple,
     Scientist,
+    Engineer,
+    Doctor,
+    Astronaut,
     Soldier,
+    Terrorist,
+    Detective,
   }
   [System.FlagsAttribute()]
   public enum InputButtons : int {
@@ -714,16 +717,14 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct ItemSpawner : Quantum.IComponent {
-    public const Int32 SIZE = 448;
+    public const Int32 SIZE = 440;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(0)]
-    public QBoolean LoadAllPosition;
-    [FieldOffset(8)]
     public AssetRef<ItemSpawnPosition> ItemSpawnPosition;
-    [FieldOffset(88)]
+    [FieldOffset(80)]
     [FramePrinter.FixedArrayAttribute(typeof(Positions), 15)]
     private fixed Byte _Positions_[360];
-    [FieldOffset(16)]
+    [FieldOffset(8)]
     [FramePrinter.FixedArrayAttribute(typeof(ItemSpawn), 3)]
     private fixed Byte _Item_[72];
     public FixedArray<Positions> Positions {
@@ -739,7 +740,6 @@ namespace Quantum {
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 20183;
-        hash = hash * 31 + LoadAllPosition.GetHashCode();
         hash = hash * 31 + ItemSpawnPosition.GetHashCode();
         hash = hash * 31 + HashCodeUtils.GetArrayHashCode(Positions);
         hash = hash * 31 + HashCodeUtils.GetArrayHashCode(Item);
@@ -748,7 +748,6 @@ namespace Quantum {
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (ItemSpawner*)ptr;
-        QBoolean.Serialize(&p->LoadAllPosition, serializer);
         AssetRef.Serialize(&p->ItemSpawnPosition, serializer);
         FixedArray.Serialize(p->Item, serializer, Statics.SerializeItemSpawn);
         FixedArray.Serialize(p->Positions, serializer, Statics.SerializePositions);
@@ -778,27 +777,20 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct PlayerInfo : Quantum.IComponent {
-    public const Int32 SIZE = 168;
+    public const Int32 SIZE = 144;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(8)]
     public PlayerRef PlayerRef;
-    [FieldOffset(12)]
-    public PlayerRole PlayerRole;
     [FieldOffset(4)]
     public Int32 PlayerSkinColor;
-    [FieldOffset(40)]
+    [FieldOffset(16)]
     [Header("Inventory")]
     [FramePrinter.FixedArrayAttribute(typeof(ItemInfo), 4)]
     private fixed Byte _Inventory_[128];
-    [FieldOffset(16)]
+    [FieldOffset(12)]
     public QBoolean HadWeapon;
     [FieldOffset(0)]
     public Int32 CurrSelectItem;
-    [FieldOffset(24)]
-    [Header("Player Stats")]
-    public FP Health;
-    [FieldOffset(32)]
-    public FP Speed;
     public FixedArray<ItemInfo> Inventory {
       get {
         fixed (byte* p = _Inventory_) { return new FixedArray<ItemInfo>(p, 32, 4); }
@@ -808,13 +800,10 @@ namespace Quantum {
       unchecked { 
         var hash = 13049;
         hash = hash * 31 + PlayerRef.GetHashCode();
-        hash = hash * 31 + (Int32)PlayerRole;
         hash = hash * 31 + PlayerSkinColor.GetHashCode();
         hash = hash * 31 + HashCodeUtils.GetArrayHashCode(Inventory);
         hash = hash * 31 + HadWeapon.GetHashCode();
         hash = hash * 31 + CurrSelectItem.GetHashCode();
-        hash = hash * 31 + Health.GetHashCode();
-        hash = hash * 31 + Speed.GetHashCode();
         return hash;
       }
     }
@@ -823,10 +812,7 @@ namespace Quantum {
         serializer.Stream.Serialize(&p->CurrSelectItem);
         serializer.Stream.Serialize(&p->PlayerSkinColor);
         PlayerRef.Serialize(&p->PlayerRef, serializer);
-        serializer.Stream.Serialize((Int32*)&p->PlayerRole);
         QBoolean.Serialize(&p->HadWeapon, serializer);
-        FP.Serialize(&p->Health, serializer);
-        FP.Serialize(&p->Speed, serializer);
         FixedArray.Serialize(p->Inventory, serializer, Statics.SerializeItemInfo);
     }
   }

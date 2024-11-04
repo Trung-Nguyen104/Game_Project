@@ -150,7 +150,6 @@ namespace Quantum.Prototypes {
   [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.ItemSpawner))]
   public unsafe partial class ItemSpawnerPrototype : ComponentPrototype<Quantum.ItemSpawner> {
-    public QBoolean LoadAllPosition;
     public AssetRef<ItemSpawnPosition> ItemSpawnPosition;
     [ArrayLengthAttribute(15)]
     public Quantum.Prototypes.PositionsPrototype[] Positions = new Quantum.Prototypes.PositionsPrototype[15];
@@ -163,7 +162,6 @@ namespace Quantum.Prototypes {
         return f.Set(entity, component) == SetResult.ComponentAdded;
     }
     public void Materialize(Frame frame, ref Quantum.ItemSpawner result, in PrototypeMaterializationContext context = default) {
-        result.LoadAllPosition = this.LoadAllPosition;
         result.ItemSpawnPosition = this.ItemSpawnPosition;
         for (int i = 0, count = PrototypeValidator.CheckLength(Positions, 15, in context); i < count; ++i) {
           this.Positions[i].Materialize(frame, ref *result.Positions.GetPointer(i), in context);
@@ -195,16 +193,12 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.PlayerInfo))]
   public unsafe partial class PlayerInfoPrototype : ComponentPrototype<Quantum.PlayerInfo> {
     public PlayerRef PlayerRef;
-    public Quantum.QEnum32<PlayerRole> PlayerRole;
     public Int32 PlayerSkinColor;
     [Header("Inventory")]
     [ArrayLengthAttribute(4)]
     public Quantum.Prototypes.ItemInfoPrototype[] Inventory = new Quantum.Prototypes.ItemInfoPrototype[4];
     public QBoolean HadWeapon;
     public Int32 CurrSelectItem;
-    [Header("Player Stats")]
-    public FP Health;
-    public FP Speed;
     partial void MaterializeUser(Frame frame, ref Quantum.PlayerInfo result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.PlayerInfo component = default;
@@ -213,15 +207,12 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.PlayerInfo result, in PrototypeMaterializationContext context = default) {
         result.PlayerRef = this.PlayerRef;
-        result.PlayerRole = this.PlayerRole;
         result.PlayerSkinColor = this.PlayerSkinColor;
         for (int i = 0, count = PrototypeValidator.CheckLength(Inventory, 4, in context); i < count; ++i) {
           this.Inventory[i].Materialize(frame, ref *result.Inventory.GetPointer(i), in context);
         }
         result.HadWeapon = this.HadWeapon;
         result.CurrSelectItem = this.CurrSelectItem;
-        result.Health = this.Health;
-        result.Speed = this.Speed;
         MaterializeUser(frame, ref result, in context);
     }
   }

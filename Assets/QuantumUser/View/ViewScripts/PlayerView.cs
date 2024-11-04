@@ -6,12 +6,11 @@ namespace Quantum
 
     public unsafe class PlayerView : QuantumEntityViewComponent
     {
-        public PlayerInfo playerInfo;
+        private PlayerInfo playerInfo;
         private Transform2D transform2D;
         private Vector3 mousePosition;
         private Animator animator;
         private Light2D spotLight;
-
         private bool facingLeft = true;
 
         private void Start()
@@ -19,7 +18,7 @@ namespace Quantum
             QuantumCallback.Subscribe(this, (CallbackPollInput callback) => PollInput(callback));
             QuantumEvent.Subscribe(listener: this, handler: (EventIsMoving e) => IsMoving(e));
             spotLight = GetComponentInChildren<Light2D>();
-            animator = GetComponentInChildren<Animator>();
+            animator = GetComponentInChildren<Animator>(); 
         }
 
         private void Update()
@@ -32,7 +31,7 @@ namespace Quantum
             CameraHandler();
         }
 
-        public bool CheckLocalPlayer() => QuantumRunner.DefaultGame.PlayerIsLocal(playerInfo.PlayerRef);
+        private bool CheckLocalPlayer() => QuantumRunner.DefaultGame.PlayerIsLocal(playerInfo.PlayerRef);
 
         public void IsMoving(EventIsMoving e)
         {
@@ -52,7 +51,6 @@ namespace Quantum
             if (CheckLocalPlayer())
             {
                 Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -20);
-                mousePosition = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
             }
         }
 
@@ -76,7 +74,9 @@ namespace Quantum
             {
                 return;
             }
-            
+
+            mousePosition = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
+
             Input input = new()
             {
                 PickUpItem = UnityEngine.Input.GetKey(KeyCode.E),

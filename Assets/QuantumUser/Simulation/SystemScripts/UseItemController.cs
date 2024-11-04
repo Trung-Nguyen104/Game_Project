@@ -6,6 +6,10 @@ namespace Quantum
     [Preserve]
     public unsafe class UseItemController : SystemMainThreadFilter<UseItemController.Filter>
     {
+        private RuntimePlayer playerData;
+        private Input* input;
+        private ItemInfo currItem;
+
         public struct Filter
         {
             public EntityRef Entity;
@@ -14,9 +18,9 @@ namespace Quantum
 
         public override void Update(Frame frame, ref Filter filter)
         {
-            var playerLocal = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
-            var input = frame.GetPlayerInput(filter.PlayerInfo->PlayerRef);
-            var currItem = filter.PlayerInfo->Inventory[filter.PlayerInfo->CurrSelectItem];
+            playerData = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
+            input = frame.GetPlayerInput(filter.PlayerInfo->PlayerRef);
+            currItem = filter.PlayerInfo->Inventory[filter.PlayerInfo->CurrSelectItem];
 
             if (input->InteracAction.WasPressed && frame.TryFindAsset(currItem.Item.ItemData, out var item))
             {   
@@ -26,8 +30,8 @@ namespace Quantum
                 }
                 if (item.itemType == ItemType.Heal)
                 {
-                    filter.PlayerInfo->Health += item.heal;
-                    frame.Events.DropItem(filter.PlayerInfo->PlayerRef, filter.PlayerInfo->CurrSelectItem, item);
+                    playerData.CurrHealth += item.heal.AsInt;
+                    frame.Events.RemoveItem(filter.PlayerInfo->PlayerRef, filter.PlayerInfo->CurrSelectItem, item);
                     frame.Signals.OnUseItem(currItem);
                 }
                 else if (item.itemType == ItemType.Tool)

@@ -1,5 +1,6 @@
 using Photon.Deterministic;
 using UnityEngine.Scripting;
+using UnityEngine;
 
 namespace Quantum
 {
@@ -10,9 +11,8 @@ namespace Quantum
         private GameSession* gameSession;
         private Input* input;
         private RuntimePlayer playerData;
-        private readonly int playerStartHealth = 30;
-        private readonly float stopDistance = 0.1f;
-        private readonly float maxDistance = 20f;
+        private float stopDistance = 0.1f;
+        private float maxDistance = 20f;
 
         public struct Filter
         {
@@ -27,10 +27,14 @@ namespace Quantum
         {
             input = frame.GetPlayerInput(filter.PlayerInfo->PlayerRef);
             playerData = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
-            playerTransform = filter.Transform;
             gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
+            playerTransform = filter.Transform;
 
             SetUpPlayer(frame, filter);
+            if(playerData.CurrHealth <= 0)
+            {
+                return;
+            }
             PlayerMovement(frame, filter);
             AimController(filter);
         }
@@ -43,7 +47,7 @@ namespace Quantum
             }
             if (gameSession->GameState == GameState.GameEnded)
             {
-                filter.PlayerInfo->Health = playerStartHealth;
+                playerData.CurrHealth = playerData.MaxHealth;
                 TeleportPlayerToPosition(-71, 15);
             }
         }
@@ -72,7 +76,7 @@ namespace Quantum
             }
             var direction = (filter.MousePointerInfo->targetPosition - filter.Transform->Position).Normalized;
             frame.Events.IsMoving(filter.PlayerInfo->PlayerRef, true);
-            filter.Physics2D->Velocity = direction * FPMath.Min(filter.PlayerInfo->Speed, distanceToTarget / frame.DeltaTime);
+            filter.Physics2D->Velocity = direction * FPMath.Min(playerData.PlayerSeed, distanceToTarget / frame.DeltaTime);
         }
 
         private void TeleportPlayerToPosition(int x, int y)

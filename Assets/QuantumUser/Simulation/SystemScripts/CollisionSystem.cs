@@ -25,6 +25,10 @@ namespace Quantum
 
         private static void PickUpItem(Frame frame, CollisionInfo2D info, PlayerInfo* playerInfo, ItemInfo itemInfo)
         {
+            if (frame.GetPlayerData(playerInfo->PlayerRef).CurrHealth <= 0)
+            {
+                return;
+            }
             var item = frame.FindAsset(itemInfo.Item.ItemData);
             var itemPosition = frame.Get<Transform2D>(info.Entity).Position.XY;
             for (int i = 0; i < playerInfo->Inventory.Length; i++)
@@ -56,7 +60,7 @@ namespace Quantum
                 {
                     if(playerInfo->PlayerRef != bulletInfo.OwnerPlayer)
                     {
-                        playerInfo->Health -= bulletInfo.Damage;
+                        frame.GetPlayerData(playerInfo->PlayerRef).CurrHealth -= bulletInfo.Damage.AsInt;
                     }
                     else
                     {

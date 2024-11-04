@@ -28,14 +28,15 @@ namespace Quantum
                 playerData.HaveRandomSkin = true;
             }
 
+            playerData.CurrHealth = playerData.MaxHealth;
             playerInfo->PlayerSkinColor = playerData.SkinColor;
             playerInfo->PlayerRef = player;
+
+            listPlayerEntityRef.Add(playerEntityRef);
 
             //temporary
             var playerTransform = frame.Unsafe.GetPointer<Transform2D>(playerEntityRef);
             playerTransform->Position = new FPVector2(-71, 15);
-
-            listPlayerEntityRef.Add(playerEntityRef);
         }
 
         public void OnPlayerRemoved(Frame frame, PlayerRef player)

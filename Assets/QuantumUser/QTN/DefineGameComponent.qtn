@@ -19,17 +19,12 @@ global
 component PlayerInfo
 {
 	player_ref PlayerRef;
-	PlayerRole PlayerRole;
 	Int32 PlayerSkinColor;
 
 	[Header("Inventory")]
 	array<ItemInfo>[4] Inventory;
 	bool HadWeapon;
 	Int32 CurrSelectItem;
-
-	[Header("Player Stats")]
-	FP Health;
-	FP Speed;
 }
 
 component MousePointerInfo
@@ -48,7 +43,6 @@ component ItemInfo
 
 component ItemSpawner
 {
-	bool LoadAllPosition;
 	AssetRef<ItemSpawnPosition> ItemSpawnPosition;
 	array<Positions>[15] Positions;
 	array<ItemSpawn>[3] Item;
@@ -98,11 +92,14 @@ struct RoleProfile
 enum PlayerRole
 {
 	None,
-	Monster,
-	Astronaut,
-	Couple, 
-	Scientist,
-	Soldier
+	Monster, 
+	Scientist, 
+	Engineer, 
+	Doctor, 
+	Astronaut, 
+	Soldier, 
+	Terrorist, 
+	Detective
 }
 
 enum GameState
@@ -126,7 +123,7 @@ event SelectItem
 	Int32 SelectItem;
 }
 
-event DropItem
+event RemoveItem
 {
 	player_ref PlayerRef;
 	Int32 CurrSelectItem;

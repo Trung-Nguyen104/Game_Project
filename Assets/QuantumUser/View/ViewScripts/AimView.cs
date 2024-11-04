@@ -6,7 +6,7 @@ namespace Quantum
     {
         public Transform shootPointTransform;
         private Transform aimTransform;
-        private RuntimePlayer playerLocal;
+        private RuntimePlayer playerData;
         private const float maxAngle = 90;
 
         private void Start()
@@ -22,10 +22,10 @@ namespace Quantum
 
         private void SetUpShootPoint()
         {
-            playerLocal = VerifiedFrame.GetPlayerData(VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef).PlayerRef);
-            playerLocal.ShootPointPosition = shootPointTransform.position.ToFPVector2();
-            playerLocal.ShootPointDirection = shootPointTransform.right.ToFPVector2();
-            playerLocal.ShootPointRotation = shootPointTransform.rotation.ToFPRotation2D();
+            playerData = VerifiedFrame.GetPlayerData(VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef).PlayerRef);
+            playerData.ShootPointPosition = shootPointTransform.position.ToFPVector2();
+            playerData.ShootPointDirection = shootPointTransform.right.ToFPVector2();
+            playerData.ShootPointRotation = shootPointTransform.rotation.ToFPRotation2D();
         }
 
         private void AimingController()

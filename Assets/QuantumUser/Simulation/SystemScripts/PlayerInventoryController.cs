@@ -4,12 +4,12 @@ namespace Quantum
     using UnityEngine.Scripting;
 
     [Preserve]
-    public unsafe class InventoryController : SystemMainThreadFilter<InventoryController.Filter>
+    public unsafe class PlayerInventoryController : SystemMainThreadFilter<PlayerInventoryController.Filter>
     {
         private Input* input;
-        private RuntimePlayer playerLocal;
         private GameSession* gameSession;
         private EntityRef itemDropRef;
+        private RuntimePlayer playerData;
 
         public struct Filter
         {
@@ -21,30 +21,29 @@ namespace Quantum
         public override void Update(Frame frame, ref Filter filter)
         {
             input = frame.GetPlayerInput(filter.PlayerInfo->PlayerRef);
-            playerLocal = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
+            playerData = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
             gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
-
+            if (playerData.CurrHealth <= 0)
+            {
+                return;
+            }
             SelectItemHandler(frame, filter);
             if (frame.TryFindAsset(filter.PlayerInfo->Inventory[filter.PlayerInfo->CurrSelectItem].Item.ItemData, out var currItemData))
             {
-                DropItemHandler(frame, filter, currItemData);
                 ResetInventory(frame, filter, currItemData);
+                DropItemHandler(frame, filter, currItemData);
             }
         }
 
         private void ResetInventory(Frame frame, Filter filter, ItemData currItemData)
         {
-            if (gameSession->GameState != GameState.GameStarted)
+            if (gameSession->GameState == GameState.Waiting)
             {
-                if (gameSession->GameState == GameState.GameEnded)
+                for (int i = 0; i < filter.PlayerInfo->Inventory.Length; i++)
                 {
-                    for (int i = 0; i < filter.PlayerInfo->Inventory.Length; i++)
-                    {
-                        ClearUpInventorySlot(i, filter.PlayerInfo->Inventory, filter, currItemData);
-                        frame.Events.DropItem(filter.PlayerInfo->PlayerRef, i, currItemData);
-                    }
+                    ClearUpInventorySlot(i, filter.PlayerInfo->Inventory, filter, currItemData);
+                    frame.Events.RemoveItem(filter.PlayerInfo->PlayerRef, i, currItemData);
                 }
-                return;
             }
         }
 
@@ -70,7 +69,7 @@ namespace Quantum
                     SetUpDropItem(frame, filter, playerInventory[currSelectItem]);
                     HandleItemWeapon(frame, playerInventory[currSelectItem]);
                     ClearUpInventorySlot(currSelectItem, playerInventory, filter, currItemData);
-                    frame.Events.DropItem(filter.PlayerInfo->PlayerRef, filter.PlayerInfo->CurrSelectItem, currItemData);
+                    frame.Events.RemoveItem(filter.PlayerInfo->PlayerRef, filter.PlayerInfo->CurrSelectItem, currItemData);
                 }
             }
         }
@@ -81,9 +80,9 @@ namespace Quantum
             var itemDropTransform = frame.Unsafe.GetPointer<Transform2D>(itemDropRef);
             var itemDropPhysis2D = frame.Unsafe.GetPointer<PhysicsBody2D>(itemDropRef);
 
-            itemDropPhysis2D->AddLinearImpulse(playerLocal.ShootPointDirection * 1);
+            itemDropPhysis2D->AddLinearImpulse(playerData.ShootPointDirection * 1);
             itemDropTransform->Rotation = frame.Get<MousePointerInfo>(filter.Entity).AimAngle;
-            itemDropTransform->Position = playerLocal.ShootPointPosition;
+            itemDropTransform->Position = playerData.ShootPointPosition;
         }
 
         private void HandleItemWeapon(Frame frame, ItemInfo currItem)

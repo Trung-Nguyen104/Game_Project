@@ -14,11 +14,10 @@ namespace Quantum
         {
             animator = GetComponent<Animator>();
         }
+
         private void Update()
         {
             var playerInfo = VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef);
-            var playerData = VerifiedFrame.GetPlayerData(playerInfo.PlayerRef);
-
             animator.runtimeAnimatorController = animController[playerInfo.PlayerSkinColor];
         }
     }

@@ -93,7 +93,7 @@ MonoBehaviour:
     StartDisabled: 0
     Children: []
   - SystemType:
-      AssemblyQualifiedName: Quantum.InventoryController, Quantum.Simulation
+      AssemblyQualifiedName: Quantum.PlayerInventoryController, Quantum.Simulation
     SystemName: 
     StartDisabled: 0
     Children: []

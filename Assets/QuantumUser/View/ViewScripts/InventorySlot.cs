@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class InventorySlot : MonoBehaviour
 {
-    private static InventorySlot instance;
     public static InventorySlot Instance { get => instance; }
-
+    private static InventorySlot instance;
     public ItemSlotsView[] itemSlots;
 
     private void Awake()
