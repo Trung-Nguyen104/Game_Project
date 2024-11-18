@@ -18,62 +18,122 @@ MonoBehaviour:
       Value: 378436883922357289
   positions:
   - X:
-      RawValue: -547225
+      RawValue: -5334630
     Y:
-      RawValue: 290324
+      RawValue: -1094451
   - X:
-      RawValue: 112721
+      RawValue: 1343488
     Y:
-      RawValue: 333578
+      RawValue: -1592524
   - X:
-      RawValue: 416808
+      RawValue: -791674
     Y:
-      RawValue: 245760
+      RawValue: 1049231
   - X:
-      RawValue: -779223
+      RawValue: -2407137
     Y:
-      RawValue: -349306
+      RawValue: 911605
   - X:
-      RawValue: 245760
+      RawValue: -145489
     Y:
-      RawValue: -353894
+      RawValue: -905052
   - X:
-      RawValue: 736624
+      RawValue: 119275
     Y:
-      RawValue: -26869
+      RawValue: -1546649
   - X:
-      RawValue: -493486
+      RawValue: -312606
     Y:
-      RawValue: -31457
+      RawValue: 538705
   - X:
-      RawValue: -220856
+      RawValue: -5649203
     Y:
-      RawValue: -387317
+      RawValue: -2067660
   - X:
-      RawValue: 175636
+      RawValue: -5625610
     Y:
-      RawValue: 385351
+      RawValue: -2551971
   - X:
-      RawValue: 709099
+      RawValue: -5655757
     Y:
-      RawValue: -263454
+      RawValue: -3248619
   - X:
-      RawValue: -790364
+      RawValue: -4091412
     Y:
-      RawValue: 261488
+      RawValue: -2776105
   - X:
-      RawValue: 619315
+      RawValue: -2074214
     Y:
-      RawValue: -74055
+      RawValue: -3276144
   - X:
-      RawValue: -500039
+      RawValue: -2453667
     Y:
-      RawValue: -47185
+      RawValue: -861798
   - X:
-      RawValue: -150732
+      RawValue: -584581
     Y:
-      RawValue: 125829
+      RawValue: -1943797
   - X:
-      RawValue: 197918
+      RawValue: -393871
     Y:
-      RawValue: 26869
+      RawValue: -3046768
+  - X:
+      RawValue: -808058
+    Y:
+      RawValue: -3036938
+  - X:
+      RawValue: -1918238
+    Y:
+      RawValue: -2294415
+  - X:
+      RawValue: -992870
+    Y:
+      RawValue: -2658140
+  - X:
+      RawValue: -4633395
+    Y:
+      RawValue: -2339635
+  - X:
+      RawValue: 517734
+    Y:
+      RawValue: -2673868
+  - X:
+      RawValue: -701235
+    Y:
+      RawValue: -655360
+  - X:
+      RawValue: -3565158
+    Y:
+      RawValue: -1644953
+  - X:
+      RawValue: 173015
+    Y:
+      RawValue: -2257715
+  - X:
+      RawValue: -4823449
+    Y:
+      RawValue: 622592
+  - X:
+      RawValue: -5380505
+    Y:
+      RawValue: -294912
+  - X:
+      RawValue: 2424832
+    Y:
+      RawValue: -1867776
+  - X:
+      RawValue: 2070937
+    Y:
+      RawValue: -773324
+  - X:
+      RawValue: -1087897
+    Y:
+      RawValue: -996147
+  - X:
+      RawValue: -688128
+    Y:
+      RawValue: -19660
+  - X:
+      RawValue: -2495611
+    Y:
+      RawValue: -1883504

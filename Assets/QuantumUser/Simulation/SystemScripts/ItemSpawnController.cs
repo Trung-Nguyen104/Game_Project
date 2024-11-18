@@ -72,11 +72,6 @@ namespace Quantum
                         var itemInfo = frame.Unsafe.GetPointer<ItemInfo>(itemEnityRef);
                         var itemTransform = frame.Unsafe.GetPointer<Transform2D>(itemEnityRef);
 
-                        if (itemData.itemType == ItemType.Weapon)
-                        {
-                            itemInfo->GunAmmo = frame.RNG->Next(0, itemData.ammo.AsInt);
-                        }
-
                         itemTransform->Rotation = frame.RNG->Next(-45, 45);
                         itemTransform->Position = listItemSpawnPosition[randomPosition].Position;
                         listItem[i].ItemQuantity += 1;

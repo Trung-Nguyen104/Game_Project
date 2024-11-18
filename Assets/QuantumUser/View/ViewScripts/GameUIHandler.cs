@@ -1,7 +1,6 @@
 using Photon.Client;
 using Photon.Realtime;
 using Quantum;
-using System;
 using UnityEngine;
 
 enum GameSessionCode : byte
@@ -12,9 +11,8 @@ enum GameSessionCode : byte
 
 public unsafe class GameUIHandler : QuantumMonoBehaviour, IOnEventCallback
 {
-    public UnityEngine.UI.Button startGameButton;
-    public UnityEngine.UI.Button endGameButton;
-
+    [SerializeField] private UnityEngine.UI.Button startGameButton;
+    [SerializeField] private UnityEngine.UI.Button endGameButton;
     private Frame frame;
     private RealtimeClient client;
     private GameSession* gameSession;

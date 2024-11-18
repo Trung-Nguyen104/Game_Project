@@ -20,12 +20,12 @@ MonoBehaviour:
   itemName: Piston
   icon: {fileID: 21300000, guid: 9ac67182453d46ac8cc8d38dbfc5e8cf, type: 3}
   damge:
-    RawValue: 655360
+    RawValue: 2293760
   ammo:
-    RawValue: 327680
+    RawValue: 524288
   heal:
     RawValue: 0
   itemQuantity:
-    RawValue: 196608
+    RawValue: 327680
   respawnTime:
     RawValue: 0

@@ -11,6 +11,7 @@ namespace Quantum
         private GameSession* gameSession;
         private Input* input;
         private RuntimePlayer playerData;
+        private FP rebornTimer;
         private float stopDistance = 0.1f;
         private float maxDistance = 20f;
 
@@ -48,7 +49,7 @@ namespace Quantum
             if (gameSession->GameState == GameState.GameEnded)
             {
                 playerData.CurrHealth = playerData.MaxHealth;
-                TeleportPlayerToPosition(-71, 15);
+                TeleportPlayerToPosition(-98, -26);
             }
         }
 

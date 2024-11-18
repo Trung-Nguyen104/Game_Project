@@ -26,6 +26,6 @@ MonoBehaviour:
   heal:
     RawValue: 0
   itemQuantity:
-    RawValue: 65536
+    RawValue: 131072
   respawnTime:
     RawValue: 0

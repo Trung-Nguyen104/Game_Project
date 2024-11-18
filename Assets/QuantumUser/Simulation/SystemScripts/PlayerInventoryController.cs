@@ -23,31 +23,34 @@ namespace Quantum
             input = frame.GetPlayerInput(filter.PlayerInfo->PlayerRef);
             playerData = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
             gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
-            if (playerData.CurrHealth <= 0)
+            if (playerData.CurrHealth <= 0 || gameSession->GameState == GameState.Waiting)
             {
+                CleanUpInventory(frame, filter);
                 return;
             }
-            SelectItemHandler(frame, filter);
+            SelectItem(frame, filter);
             if (frame.TryFindAsset(filter.PlayerInfo->Inventory[filter.PlayerInfo->CurrSelectItem].Item.ItemData, out var currItemData))
             {
-                ResetInventory(frame, filter, currItemData);
-                DropItemHandler(frame, filter, currItemData);
+                if (input->DropItem.WasPressed && filter.PlayerInfo->CurrSelectItem > -1)
+                { 
+                    DropItem(frame, filter, currItemData);
+                }
             }
         }
 
-        private void ResetInventory(Frame frame, Filter filter, ItemData currItemData)
+        private void CleanUpInventory(Frame frame, Filter filter)
         {
-            if (gameSession->GameState == GameState.Waiting)
+            for (int i = 0; i < filter.PlayerInfo->Inventory.Length; i++)
             {
-                for (int i = 0; i < filter.PlayerInfo->Inventory.Length; i++)
+                if (frame.TryFindAsset(filter.PlayerInfo->Inventory[i].Item.ItemData, out var currItemData))
                 {
-                    ClearUpInventorySlot(i, filter.PlayerInfo->Inventory, filter, currItemData);
+                    DropItem(frame, filter, currItemData);
                     frame.Events.RemoveItem(filter.PlayerInfo->PlayerRef, i, currItemData);
                 }
             }
         }
 
-        private void SelectItemHandler(Frame frame, Filter filter)
+        private void SelectItem(Frame frame, Filter filter)
         {
             if (input->SelectItem > 0)
             {
@@ -57,20 +60,17 @@ namespace Quantum
             }
         }
 
-        private void DropItemHandler(Frame frame, Filter filter, ItemData currItemData)
+        private void DropItem(Frame frame, Filter filter, ItemData currItemData)
         {
-            if (input->DropItem.WasPressed && filter.PlayerInfo->CurrSelectItem > -1)
-            {
-                var currSelectItem = filter.PlayerInfo->CurrSelectItem;
-                var playerInventory = filter.PlayerInfo->Inventory;
+            var currSelectItem = filter.PlayerInfo->CurrSelectItem;
+            var playerInventory = filter.PlayerInfo->Inventory;
 
-                if (currItemData != null)
-                {
-                    SetUpDropItem(frame, filter, playerInventory[currSelectItem]);
-                    HandleItemWeapon(frame, playerInventory[currSelectItem]);
-                    ClearUpInventorySlot(currSelectItem, playerInventory, filter, currItemData);
-                    frame.Events.RemoveItem(filter.PlayerInfo->PlayerRef, filter.PlayerInfo->CurrSelectItem, currItemData);
-                }
+            if (currItemData != null)
+            {
+                SetUpDropItem(frame, filter, playerInventory[currSelectItem]);
+                HandleItemWeapon(frame, playerInventory[currSelectItem]);
+                ClearUpInventorySlot(currSelectItem, playerInventory, filter, currItemData);
+                frame.Events.RemoveItem(filter.PlayerInfo->PlayerRef, filter.PlayerInfo->CurrSelectItem, currItemData);
             }
         }
 

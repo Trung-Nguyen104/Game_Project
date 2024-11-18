@@ -37,14 +37,14 @@ component ItemInfo
 {
 	ItemProfile Item;
 	[Header("If Item Is Gun")]
-	FP GunAmmo;
+	Int32 GunAmmo;
 	AssetRef<EntityPrototype> BulletPrototype;
 }
 
 component ItemSpawner
 {
 	AssetRef<ItemSpawnPosition> ItemSpawnPosition;
-	array<Positions>[15] Positions;
+	array<Positions>[30] Positions;
 	array<ItemSpawn>[3] Item;
 }
 
@@ -102,12 +102,27 @@ enum PlayerRole
 	Detective
 }
 
+enum PlayerStatus
+{
+	Alive,
+	Death,
+	Ghost,
+	Immunity
+}
+
 enum GameState
 {
 	Waiting,
 	GameStarting,
 	GameStarted,
 	GameEnded,
+}
+
+enum TaskType
+{
+	WiresEnergy,
+	EnterCodes,
+	RememberIndexs
 }
 
 event PickUpItem
@@ -134,6 +149,20 @@ event IsMoving
 {
 	player_ref PlayerRef;
 	bool isMoving;
+}
+
+event IsHighLight
+{
+	player_ref PlayerRef;
+	entity_ref TaskRef;
+	bool IsEnter;
+}
+
+event InitiatingTask
+{
+	player_ref PlayerRef;
+	entity_ref TaskRef;
+	TaskType TaskType;
 }
 
 signal OnPickUpItem (FPVector2 Position);

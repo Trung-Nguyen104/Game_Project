@@ -52,7 +52,7 @@ namespace Quantum {
   public unsafe partial class Frame {
     public unsafe partial struct FrameEvents {
       static partial void GetEventTypeCountCodeGen(ref Int32 eventCount) {
-        eventCount = 5;
+        eventCount = 7;
       }
       static partial void GetParentEventIDCodeGen(Int32 eventID, ref Int32 parentEventID) {
         switch (eventID) {
@@ -65,6 +65,8 @@ namespace Quantum {
           case EventSelectItem.ID: result = typeof(EventSelectItem); return;
           case EventRemoveItem.ID: result = typeof(EventRemoveItem); return;
           case EventIsMoving.ID: result = typeof(EventIsMoving); return;
+          case EventIsHighLight.ID: result = typeof(EventIsHighLight); return;
+          case EventInitiatingTask.ID: result = typeof(EventInitiatingTask); return;
           default: break;
         }
       }
@@ -95,6 +97,22 @@ namespace Quantum {
         var ev = _f.Context.AcquireEvent<EventIsMoving>(EventIsMoving.ID);
         ev.PlayerRef = PlayerRef;
         ev.isMoving = isMoving;
+        _f.AddEvent(ev);
+        return ev;
+      }
+      public EventIsHighLight IsHighLight(PlayerRef PlayerRef, EntityRef TaskRef, QBoolean IsEnter) {
+        var ev = _f.Context.AcquireEvent<EventIsHighLight>(EventIsHighLight.ID);
+        ev.PlayerRef = PlayerRef;
+        ev.TaskRef = TaskRef;
+        ev.IsEnter = IsEnter;
+        _f.AddEvent(ev);
+        return ev;
+      }
+      public EventInitiatingTask InitiatingTask(PlayerRef PlayerRef, EntityRef TaskRef, TaskType TaskType) {
+        var ev = _f.Context.AcquireEvent<EventInitiatingTask>(EventInitiatingTask.ID);
+        ev.PlayerRef = PlayerRef;
+        ev.TaskRef = TaskRef;
+        ev.TaskType = TaskType;
         _f.AddEvent(ev);
         return ev;
       }
@@ -208,6 +226,64 @@ namespace Quantum {
         var hash = 53;
         hash = hash * 31 + PlayerRef.GetHashCode();
         hash = hash * 31 + isMoving.GetHashCode();
+        return hash;
+      }
+    }
+  }
+  public unsafe partial class EventIsHighLight : EventBase {
+    public new const Int32 ID = 5;
+    public PlayerRef PlayerRef;
+    public EntityRef TaskRef;
+    public QBoolean IsEnter;
+    protected EventIsHighLight(Int32 id, EventFlags flags) : 
+        base(id, flags) {
+    }
+    public EventIsHighLight() : 
+        base(5, EventFlags.Server|EventFlags.Client) {
+    }
+    public new QuantumGame Game {
+      get {
+        return (QuantumGame)base.Game;
+      }
+      set {
+        base.Game = value;
+      }
+    }
+    public override Int32 GetHashCode() {
+      unchecked {
+        var hash = 59;
+        hash = hash * 31 + PlayerRef.GetHashCode();
+        hash = hash * 31 + TaskRef.GetHashCode();
+        hash = hash * 31 + IsEnter.GetHashCode();
+        return hash;
+      }
+    }
+  }
+  public unsafe partial class EventInitiatingTask : EventBase {
+    public new const Int32 ID = 6;
+    public PlayerRef PlayerRef;
+    public EntityRef TaskRef;
+    public TaskType TaskType;
+    protected EventInitiatingTask(Int32 id, EventFlags flags) : 
+        base(id, flags) {
+    }
+    public EventInitiatingTask() : 
+        base(6, EventFlags.Server|EventFlags.Client) {
+    }
+    public new QuantumGame Game {
+      get {
+        return (QuantumGame)base.Game;
+      }
+      set {
+        base.Game = value;
+      }
+    }
+    public override Int32 GetHashCode() {
+      unchecked {
+        var hash = 61;
+        hash = hash * 31 + PlayerRef.GetHashCode();
+        hash = hash * 31 + TaskRef.GetHashCode();
+        hash = hash * 31 + TaskType.GetHashCode();
         return hash;
       }
     }

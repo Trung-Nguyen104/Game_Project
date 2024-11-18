@@ -66,6 +66,17 @@ namespace Quantum {
     Terrorist,
     Detective,
   }
+  public enum PlayerStatus : int {
+    Alive,
+    Death,
+    Ghost,
+    Immunity,
+  }
+  public enum TaskType : int {
+    WiresEnergy,
+    EnterCodes,
+    RememberIndexs,
+  }
   [System.FlagsAttribute()]
   public enum InputButtons : int {
     PickUpItem = 1 << 0,
@@ -694,10 +705,10 @@ namespace Quantum {
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(16)]
     public ItemProfile Item;
-    [FieldOffset(8)]
-    [Header("If Item Is Gun")]
-    public FP GunAmmo;
     [FieldOffset(0)]
+    [Header("If Item Is Gun")]
+    public Int32 GunAmmo;
+    [FieldOffset(8)]
     public AssetRef<EntityPrototype> BulletPrototype;
     public override Int32 GetHashCode() {
       unchecked { 
@@ -710,26 +721,26 @@ namespace Quantum {
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (ItemInfo*)ptr;
+        serializer.Stream.Serialize(&p->GunAmmo);
         AssetRef.Serialize(&p->BulletPrototype, serializer);
-        FP.Serialize(&p->GunAmmo, serializer);
         Quantum.ItemProfile.Serialize(&p->Item, serializer);
     }
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct ItemSpawner : Quantum.IComponent {
-    public const Int32 SIZE = 440;
+    public const Int32 SIZE = 800;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(0)]
     public AssetRef<ItemSpawnPosition> ItemSpawnPosition;
     [FieldOffset(80)]
-    [FramePrinter.FixedArrayAttribute(typeof(Positions), 15)]
-    private fixed Byte _Positions_[360];
+    [FramePrinter.FixedArrayAttribute(typeof(Positions), 30)]
+    private fixed Byte _Positions_[720];
     [FieldOffset(8)]
     [FramePrinter.FixedArrayAttribute(typeof(ItemSpawn), 3)]
     private fixed Byte _Item_[72];
     public FixedArray<Positions> Positions {
       get {
-        fixed (byte* p = _Positions_) { return new FixedArray<Positions>(p, 24, 15); }
+        fixed (byte* p = _Positions_) { return new FixedArray<Positions>(p, 24, 30); }
       }
     }
     public FixedArray<ItemSpawn> Item {
@@ -1068,6 +1079,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(PlayerRef), PlayerRef.SIZE);
       typeRegistry.Register(typeof(Quantum.PlayerRole), 4);
       typeRegistry.Register(typeof(Quantum.PlayerRoleManager), Quantum.PlayerRoleManager.SIZE);
+      typeRegistry.Register(typeof(Quantum.PlayerStatus), 4);
       typeRegistry.Register(typeof(Quantum.Positions), Quantum.Positions.SIZE);
       typeRegistry.Register(typeof(Ptr), Ptr.SIZE);
       typeRegistry.Register(typeof(QBoolean), QBoolean.SIZE);
@@ -1079,6 +1091,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(Shape3D), Shape3D.SIZE);
       typeRegistry.Register(typeof(SpringJoint), SpringJoint.SIZE);
       typeRegistry.Register(typeof(SpringJoint3D), SpringJoint3D.SIZE);
+      typeRegistry.Register(typeof(Quantum.TaskType), 4);
       typeRegistry.Register(typeof(Transform2D), Transform2D.SIZE);
       typeRegistry.Register(typeof(Transform2DVertical), Transform2DVertical.SIZE);
       typeRegistry.Register(typeof(Transform3D), Transform3D.SIZE);
@@ -1104,7 +1117,9 @@ namespace Quantum {
       FramePrinter.EnsurePrimitiveNotStripped<Quantum.GameState>();
       FramePrinter.EnsurePrimitiveNotStripped<Quantum.InputButtons>();
       FramePrinter.EnsurePrimitiveNotStripped<Quantum.PlayerRole>();
+      FramePrinter.EnsurePrimitiveNotStripped<Quantum.PlayerStatus>();
       FramePrinter.EnsurePrimitiveNotStripped<QueryOptions>();
+      FramePrinter.EnsurePrimitiveNotStripped<Quantum.TaskType>();
     }
   }
 }

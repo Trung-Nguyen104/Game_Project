@@ -108,7 +108,7 @@ namespace Quantum.Prototypes {
   public unsafe partial class ItemInfoPrototype : ComponentPrototype<Quantum.ItemInfo> {
     public Quantum.Prototypes.ItemProfilePrototype Item;
     [Header("If Item Is Gun")]
-    public FP GunAmmo;
+    public Int32 GunAmmo;
     public AssetRef<EntityPrototype> BulletPrototype;
     partial void MaterializeUser(Frame frame, ref Quantum.ItemInfo result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
@@ -151,8 +151,8 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.ItemSpawner))]
   public unsafe partial class ItemSpawnerPrototype : ComponentPrototype<Quantum.ItemSpawner> {
     public AssetRef<ItemSpawnPosition> ItemSpawnPosition;
-    [ArrayLengthAttribute(15)]
-    public Quantum.Prototypes.PositionsPrototype[] Positions = new Quantum.Prototypes.PositionsPrototype[15];
+    [ArrayLengthAttribute(30)]
+    public Quantum.Prototypes.PositionsPrototype[] Positions = new Quantum.Prototypes.PositionsPrototype[30];
     [ArrayLengthAttribute(3)]
     public Quantum.Prototypes.ItemSpawnPrototype[] Item = new Quantum.Prototypes.ItemSpawnPrototype[3];
     partial void MaterializeUser(Frame frame, ref Quantum.ItemSpawner result, in PrototypeMaterializationContext context);
@@ -163,7 +163,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.ItemSpawner result, in PrototypeMaterializationContext context = default) {
         result.ItemSpawnPosition = this.ItemSpawnPosition;
-        for (int i = 0, count = PrototypeValidator.CheckLength(Positions, 15, in context); i < count; ++i) {
+        for (int i = 0, count = PrototypeValidator.CheckLength(Positions, 30, in context); i < count; ++i) {
           this.Positions[i].Materialize(frame, ref *result.Positions.GetPointer(i), in context);
         }
         for (int i = 0, count = PrototypeValidator.CheckLength(Item, 3, in context); i < count; ++i) {

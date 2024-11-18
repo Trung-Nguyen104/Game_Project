@@ -19,7 +19,7 @@ namespace Quantum
             }
             QuantumEvent.Subscribe(listener: this, handler: (EventPickUpItem e) => AddItemSlotEvent(e));
             QuantumEvent.Subscribe(listener: this, handler: (EventSelectItem e) => SelectItemEvent(e));
-            QuantumEvent.Subscribe(listener: this, handler: (EventDropItem e) => RemoveItemSlotEvent(e));
+            QuantumEvent.Subscribe(listener: this, handler: (EventRemoveItem e) => RemoveItemSlotEvent(e));
         }
 
         private void Update()
@@ -47,7 +47,7 @@ namespace Quantum
             }
         }
 
-        private void RemoveItemSlotEvent(EventDropItem e)
+        private void RemoveItemSlotEvent(EventRemoveItem e)
         {
             if (e.PlayerRef == playerInfo.PlayerRef)
             {

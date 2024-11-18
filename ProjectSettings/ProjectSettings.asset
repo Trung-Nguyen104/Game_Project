@@ -42,7 +42,7 @@ PlayerSettings:
   m_SplashScreenLogos: []
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
-  defaultScreenWidth: 1080
+  defaultScreenWidth: 720
   defaultScreenHeight: 720
   defaultScreenWidthWeb: 960
   defaultScreenHeightWeb: 600
@@ -604,10 +604,11 @@ PlayerSettings:
     PS4: QUANTUM_XY
     PS5: QUANTUM_XY
     QNX: QUANTUM_XY
+    Server: PROBUILDER_EXPERIMENTAL_FEATURES
     Stadia: QUANTUM_XY
-    Standalone: QUANTUM_XY;QUANTUM_STALL_WATCHER_ENABLED
+    Standalone: QUANTUM_XY;QUANTUM_STALL_WATCHER_ENABLED;PROBUILDER_EXPERIMENTAL_FEATURES
     VisionOS: QUANTUM_XY
-    WebGL: QUANTUM_XY
+    WebGL: QUANTUM_XY;PROBUILDER_EXPERIMENTAL_FEATURES
     Windows Store Apps: QUANTUM_XY
     XboxOne: QUANTUM_XY
     iPhone: QUANTUM_XY

@@ -36,7 +36,7 @@ namespace Quantum
 
             //temporary
             var playerTransform = frame.Unsafe.GetPointer<Transform2D>(playerEntityRef);
-            playerTransform->Position = new FPVector2(-71, 15);
+            playerTransform->Position = new FPVector2(-98, -26);
         }
 
         public void OnPlayerRemoved(Frame frame, PlayerRef player)
