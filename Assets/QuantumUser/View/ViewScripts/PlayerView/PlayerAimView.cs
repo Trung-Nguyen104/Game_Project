@@ -2,7 +2,7 @@ namespace Quantum
 {
     using UnityEngine;
 
-    public class AimView : QuantumEntityViewComponent
+    public class PlayerAimView : QuantumEntityViewComponent
     {
         public Transform shootPointTransform;
         private Transform aimTransform;

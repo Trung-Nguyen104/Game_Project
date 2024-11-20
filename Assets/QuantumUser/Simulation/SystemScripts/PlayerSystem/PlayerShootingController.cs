@@ -4,7 +4,7 @@ namespace Quantum
     using UnityEngine.Scripting;
 
     [Preserve]
-    public unsafe class ShootingController : SystemMainThreadFilter<ShootingController.Filter>
+    public unsafe class PlayerShootingController : SystemMainThreadFilter<PlayerShootingController.Filter>
     {
         public struct Filter
         {

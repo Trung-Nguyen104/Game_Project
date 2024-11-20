@@ -23,7 +23,7 @@ namespace Quantum
             QuantumEvent.Subscribe(listener: this, handler: (EventInitiatingTask e) => InitiatingTask(e));
             client = QuantumRunner.Default.NetworkClient;
             client.AddCallbackTarget(this);
-            spriteRenderer = GetComponent<SpriteRenderer>();
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             spriteRenderer.enabled = false;
         }
 

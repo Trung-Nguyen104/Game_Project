@@ -11,7 +11,7 @@ enum RoleBehavior : byte
     Scientist = 5,
 }
 
-public class TargetPlayer : QuantumEntityViewComponent, IOnEventCallback
+public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
 {
     [SerializeField] private UnityEngine.LayerMask layerMask;
     public PlayerRef playerRef { get; private set; }
@@ -52,7 +52,7 @@ public class TargetPlayer : QuantumEntityViewComponent, IOnEventCallback
         hitInfo = Physics2D.Raycast(ray.origin, ray.direction, 100, layerMask);
         if (hitInfo)
         {
-            var playerTarget = hitInfo.collider.GetComponentInChildren<TargetPlayer>();
+            var playerTarget = hitInfo.collider.GetComponentInChildren<PlayerTargetView>();
             var spriteRendererTarget = hitInfo.collider.GetComponentInChildren<SpriteRenderer>();
             if (playerTarget.playerRef == playerRef)
             {

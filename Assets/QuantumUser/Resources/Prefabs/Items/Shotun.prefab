@@ -237,13 +237,10 @@ MonoBehaviour:
       ItemData:
         Id:
           Value: 456845861006088718
-      ItemQuantity:
-        RawValue: 0
       ItemPrototype:
         Id:
           Value: 1524444612306742547
-    GunAmmo:
-      RawValue: 0
+    GunAmmo: 0
     BulletPrototype:
       Id:
         Value: 1428211140593024238

@@ -2,7 +2,7 @@ namespace Quantum
 {
     using UnityEngine;
 
-    public class InventoryView : QuantumEntityViewComponent
+    public class PLayerInventoryView : QuantumEntityViewComponent
     {
         private PlayerInfo playerInfo;
         private RuntimePlayer playerData;
