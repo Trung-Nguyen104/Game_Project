@@ -1,9 +1,12 @@
+using Photon.Client;
+using Photon.Realtime;
+using Quantum;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WireTask : MonoBehaviour
+public class WiresEnergyTask : MonoBehaviour
 {
     [Header("Wire Settings")]
     public List<Color> wireColors;
@@ -19,6 +22,8 @@ public class WireTask : MonoBehaviour
 
     [Header("Connection Settings")]
     public float connectThreshold = 140f;
+
+    public EntityRef TaskRef { get; set; }
 
     void Start()
     {
@@ -58,20 +63,14 @@ public class WireTask : MonoBehaviour
     {
         if (isTaskCompleted)
         {
-            Debug.Log("Task already completed.");
             return;
         }
 
         if (leftWireMapping[leftWire] == rightWireMapping[rightWire])
         {
-            Debug.Log("Correct connection!");
             LightOf(rightWire).color = Color.yellow;
             LightOf(leftWire).color = Color.yellow;
             CheckTaskCompletion();
-        }
-        else
-        {
-            Debug.Log("Incorrect connection.");
         }
     }
 
@@ -87,13 +86,15 @@ public class WireTask : MonoBehaviour
 
         isTaskCompleted = true;
         statusText.text = "Task Completed: DONE!";
-        Debug.Log("Task Completed!");
+        gameObject.SetActive(false);
+        var client = QuantumRunner.Default.NetworkClient;
+        client.OpRaiseEvent((byte)TaskCompletedEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        ResetTask();
     }
 
     private Image LightOf(GameObject wireGameObject) => wireGameObject.transform.Find("Light").GetComponent<Image>();
     private Image WireStartOf(GameObject wireGameObject) => wireGameObject.transform.Find("WireStart").GetComponent<Image>();
     private Image WireEndOf(GameObject wireGameObject) => wireGameObject.transform.Find("WireEnd").GetComponent<Image>();
-
 
     private void ShuffleList(List<Color> list)
     {

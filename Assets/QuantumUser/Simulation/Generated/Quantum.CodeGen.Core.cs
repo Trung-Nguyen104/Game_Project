@@ -851,6 +851,28 @@ namespace Quantum {
         FixedArray.Serialize(p->RoleProfiles, serializer, Statics.SerializeRoleProfile);
     }
   }
+  [StructLayout(LayoutKind.Explicit)]
+  public unsafe partial struct TaskInfo : Quantum.IComponent {
+    public const Int32 SIZE = 8;
+    public const Int32 ALIGNMENT = 4;
+    [FieldOffset(4)]
+    public TaskType TaskType;
+    [FieldOffset(0)]
+    public QBoolean IsTaskCompleted;
+    public override Int32 GetHashCode() {
+      unchecked { 
+        var hash = 1951;
+        hash = hash * 31 + (Int32)TaskType;
+        hash = hash * 31 + IsTaskCompleted.GetHashCode();
+        return hash;
+      }
+    }
+    public static void Serialize(void* ptr, FrameSerializer serializer) {
+        var p = (TaskInfo*)ptr;
+        QBoolean.Serialize(&p->IsTaskCompleted, serializer);
+        serializer.Stream.Serialize((Int32*)&p->TaskType);
+    }
+  }
   public unsafe partial interface ISignalOnPickUpItem : ISignal {
     void OnPickUpItem(Frame f, FPVector2 Position);
   }
@@ -927,6 +949,8 @@ namespace Quantum {
       BuildSignalsArrayOnComponentRemoved<Quantum.PlayerInfo>();
       BuildSignalsArrayOnComponentAdded<Quantum.PlayerRoleManager>();
       BuildSignalsArrayOnComponentRemoved<Quantum.PlayerRoleManager>();
+      BuildSignalsArrayOnComponentAdded<Quantum.TaskInfo>();
+      BuildSignalsArrayOnComponentRemoved<Quantum.TaskInfo>();
       BuildSignalsArrayOnComponentAdded<Transform2D>();
       BuildSignalsArrayOnComponentRemoved<Transform2D>();
       BuildSignalsArrayOnComponentAdded<Transform2DVertical>();
@@ -1091,6 +1115,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(Shape3D), Shape3D.SIZE);
       typeRegistry.Register(typeof(SpringJoint), SpringJoint.SIZE);
       typeRegistry.Register(typeof(SpringJoint3D), SpringJoint3D.SIZE);
+      typeRegistry.Register(typeof(Quantum.TaskInfo), Quantum.TaskInfo.SIZE);
       typeRegistry.Register(typeof(Quantum.TaskType), 4);
       typeRegistry.Register(typeof(Transform2D), Transform2D.SIZE);
       typeRegistry.Register(typeof(Transform2DVertical), Transform2DVertical.SIZE);
@@ -1099,7 +1124,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(Quantum._globals_), Quantum._globals_.SIZE);
     }
     static partial void InitComponentTypeIdGen() {
-      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 7)
+      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 8)
         .AddBuiltInComponents()
         .Add<Quantum.BulletInfo>(Quantum.BulletInfo.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.GameSession>(Quantum.GameSession.Serialize, null, null, ComponentFlags.Singleton)
@@ -1108,6 +1133,7 @@ namespace Quantum {
         .Add<Quantum.MousePointerInfo>(Quantum.MousePointerInfo.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.PlayerInfo>(Quantum.PlayerInfo.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.PlayerRoleManager>(Quantum.PlayerRoleManager.Serialize, null, null, ComponentFlags.None)
+        .Add<Quantum.TaskInfo>(Quantum.TaskInfo.Serialize, null, null, ComponentFlags.None)
         .Finish();
     }
     [Preserve()]

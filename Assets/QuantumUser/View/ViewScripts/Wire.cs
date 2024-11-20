@@ -53,7 +53,7 @@ public class Wire : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        WireTask wireTask = wireManager.GetComponent<WireTask>();
+        WiresEnergyTask wireTask = wireManager.GetComponent<WiresEnergyTask>();
         GameObject closestRightWire = null;
         float minDistance = Mathf.Infinity;
 
@@ -70,17 +70,11 @@ public class Wire : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         if (closestRightWire != null && minDistance <= wireTask.connectThreshold)
         {
             wireTask.ConnectWires(wire, closestRightWire);
-            LockPosition(closestRightWire.transform.Find("WireIn").GetComponent<Image>().rectTransform.localPosition);
         }
         else
         {
             ResetPosition();
         }
-    }
-
-    private void LockPosition(Vector3 targetPosition)
-    {
-        transform.Find("WireIn").GetComponent<Image>().rectTransform.localPosition = targetPosition;
     }
 
     private void ResetPosition()

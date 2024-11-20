@@ -258,6 +258,23 @@ namespace Quantum.Prototypes {
         MaterializeUser(frame, ref result, in context);
     }
   }
+  [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(Quantum.TaskInfo))]
+  public unsafe partial class TaskInfoPrototype : ComponentPrototype<Quantum.TaskInfo> {
+    public Quantum.QEnum32<TaskType> TaskType;
+    public QBoolean IsTaskCompleted;
+    partial void MaterializeUser(Frame frame, ref Quantum.TaskInfo result, in PrototypeMaterializationContext context);
+    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
+        Quantum.TaskInfo component = default;
+        Materialize((Frame)f, ref component, in context);
+        return f.Set(entity, component) == SetResult.ComponentAdded;
+    }
+    public void Materialize(Frame frame, ref Quantum.TaskInfo result, in PrototypeMaterializationContext context = default) {
+        result.TaskType = this.TaskType;
+        result.IsTaskCompleted = this.IsTaskCompleted;
+        MaterializeUser(frame, ref result, in context);
+    }
+  }
 }
 #pragma warning restore 0109
 #pragma warning restore 1591

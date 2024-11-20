@@ -60,6 +60,12 @@ component PlayerRoleManager
 	array<RoleProfile>[8] RoleProfiles;
 }
 
+component TaskInfo
+{
+	TaskType TaskType;
+	bool IsTaskCompleted;
+}
+
 singleton component GameSession
 {	
 	GameState GameState;

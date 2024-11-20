@@ -122,6 +122,11 @@ MonoBehaviour:
     SystemName: 
     StartDisabled: 0
     Children: []
+  - SystemType:
+      AssemblyQualifiedName: Quantum.TaskController, Quantum.Simulation
+    SystemName: 
+    StartDisabled: 1
+    Children: []
 --- !u!114 &1969374398273535792
 MonoBehaviour:
   m_ObjectHideFlags: 0

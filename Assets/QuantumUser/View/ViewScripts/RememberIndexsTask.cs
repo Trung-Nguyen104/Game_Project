@@ -1,20 +1,25 @@
+using Photon.Client;
+using Photon.Realtime;
+using Quantum;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RememberTask : MonoBehaviour
+public class RememberIndexsTask : MonoBehaviour
 {
+    public EntityRef TaskRef { get; set; }
     public TMP_Text taskStatus;
     public Image[] leftButtons;
     public Image[] lights;
-    public Button[] rightButtons;
-    public float highlightDuration = 1f; 
-    public int totalRounds = 6; 
+    public UnityEngine.UI.Button[] rightButtons;
+    public float highlightDuration = 1f;
+    public int totalRounds = 6;
+
     private List<int> sequence = new();
     private string originalTaskText;
-    private int currentRound = 0; 
+    private int currentRound = 0;
     private int playerProgress = 0;
 
     void Start()
@@ -37,7 +42,7 @@ public class RememberTask : MonoBehaviour
             return;
         }
 
-        lights[currentRound-1].color = Color.green;
+        lights[currentRound - 1].color = Color.green;
 
         for (int i = 0; i < currentRound; i++)
         {
@@ -51,6 +56,9 @@ public class RememberTask : MonoBehaviour
     private void CompletedTask()
     {
         taskStatus.text = "Task Completed !!";
+        gameObject.SetActive(false);
+        var client = QuantumRunner.Default.NetworkClient;
+        client.OpRaiseEvent((byte)TaskCompletedEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
         ResetTask();
     }
 
@@ -98,12 +106,12 @@ public class RememberTask : MonoBehaviour
     private IEnumerator ResetButtonColor(Image img, Color originalColor)
     {
         yield return new WaitForSeconds(highlightDuration);
-        img.color = originalColor; 
+        img.color = originalColor;
     }
 
     private void EnablePlayerInput(bool enable)
     {
-        foreach (Button btn in rightButtons)
+        foreach (UnityEngine.UI.Button btn in rightButtons)
         {
             btn.interactable = enable;
         }

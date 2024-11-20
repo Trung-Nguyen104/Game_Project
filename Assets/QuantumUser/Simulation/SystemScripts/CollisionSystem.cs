@@ -44,6 +44,39 @@ namespace Quantum
             }
         }
 
+        public void OnTriggerEnter2D(Frame frame, TriggerInfo2D info)
+        {
+            if (frame.Unsafe.TryGetPointer<PlayerInfo>(info.Other, out var playerInfo))
+            {
+                frame.Events.IsHighLight(playerInfo->PlayerRef, info.Entity, true); 
+            }
+        }
+
+        public void OnTriggerExit2D(Frame frame, ExitInfo2D info)
+        {
+            if (frame.Unsafe.TryGetPointer<PlayerInfo>(info.Other, out var playerInfo))
+            {
+                frame.Events.IsHighLight(playerInfo->PlayerRef, info.Entity, false);
+            }
+        }
+
+        public void OnTrigger2D(Frame frame, TriggerInfo2D info)
+        {
+            if (frame.Unsafe.TryGetPointer<PlayerInfo>(info.Other, out var playerInfo))
+            {
+                frame.Unsafe.TryGetPointer<TaskInfo>(info.Entity, out var taskInfo);
+                frame.Unsafe.TryGetPointer<Transform2D>(info.Entity, out var taskTransform);
+                frame.Unsafe.TryGetPointer<Transform2D>(info.Other, out var playerTransform);
+
+                var dist = FPVector2.Distance(playerTransform->Position, taskTransform->Position);
+
+                if (frame.GetPlayerInput(playerInfo->PlayerRef)->PickUpItem.WasPressed && dist <= 1)
+                {
+                    frame.Events.InitiatingTask(playerInfo->PlayerRef, info.Entity, taskInfo->TaskType);
+                }
+            }
+        }
+
         private static void PickUpItem(Frame frame, CollisionInfo2D info, PlayerInfo* playerInfo, ItemInfo itemInfo)
         {
             if (frame.GetPlayerData(playerInfo->PlayerRef).CurrHealth <= 0)
@@ -71,38 +104,6 @@ namespace Quantum
                     frame.Signals.OnPickUpItem(itemPosition);
                     frame.Destroy(info.Entity);
                     break;
-                }
-            }
-        }
-
-        public void OnTriggerEnter2D(Frame frame, TriggerInfo2D info)
-        {
-            if (frame.Unsafe.TryGetPointer<PlayerInfo>(info.Other, out var playerInfo))
-            {
-                frame.Events.IsHighLight(playerInfo->PlayerRef, info.Entity, true); 
-            }
-        }
-
-        public void OnTriggerExit2D(Frame frame, ExitInfo2D info)
-        {
-            if (frame.Unsafe.TryGetPointer<PlayerInfo>(info.Other, out var playerInfo))
-            {
-                frame.Events.IsHighLight(playerInfo->PlayerRef, info.Entity, false);
-            }
-        }
-
-        public void OnTrigger2D(Frame frame, TriggerInfo2D info)
-        {
-            if (frame.Unsafe.TryGetPointer<PlayerInfo>(info.Other, out var playerInfo))
-            {
-                frame.Unsafe.TryGetPointer<Transform2D>(info.Entity, out var taskTransform);
-                frame.Unsafe.TryGetPointer<Transform2D>(info.Other, out var playerTransform);
-
-                var dist = FPVector2.Distance(playerTransform->Position, taskTransform->Position);
-
-                if (frame.GetPlayerInput(playerInfo->PlayerRef)->PickUpItem.WasPressed && dist <= 1)
-                {
-                    Debug.Log("Initiating Task");
                 }
             }
         }

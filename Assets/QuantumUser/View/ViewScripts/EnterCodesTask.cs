@@ -1,14 +1,17 @@
+using Photon.Client;
+using Photon.Realtime;
+using Quantum;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class InputNumberTask : MonoBehaviour
+public class EnterCodesTask : MonoBehaviour
 {
+    public EntityRef TaskRef { get; set; }
     public TMP_Text randomNumberText;
     public TMP_Text inputNumberText;
-    public Button[] numberButtons;
-    public Button clearButton;
-    public Button submitButton;
+    public UnityEngine.UI.Button[] numberButtons;
+    public UnityEngine.UI.Button clearButton;
+    public UnityEngine.UI.Button submitButton;
     public int numberLength = 8;
 
     private string targetNumber;
@@ -16,7 +19,6 @@ public class InputNumberTask : MonoBehaviour
 
     private void Start()
     {
-        GenerateTargetNumber();
         SetupButtons();
         ResetTask();
     }
@@ -33,7 +35,7 @@ public class InputNumberTask : MonoBehaviour
 
     private void SetupButtons()
     {
-        foreach (Button btn in numberButtons)
+        foreach (UnityEngine.UI.Button btn in numberButtons)
         {
             string number = btn.GetComponentInChildren<TMP_Text>().text;
             btn.onClick.AddListener(() => AppendNumber(number));
@@ -76,13 +78,15 @@ public class InputNumberTask : MonoBehaviour
 
     private void ResetTask()
     {
-        currentInput = "";
-        inputNumberText.fontSize = 100;
-        inputNumberText.text = currentInput;
+        ClearInput();
+        GenerateTargetNumber();
     }
 
     private void CompleteTask()
     {
-        Debug.Log("Congratulations, you've completed the task!");
+        gameObject.SetActive(false);
+        var client = QuantumRunner.Default.NetworkClient;
+        client.OpRaiseEvent((byte)TaskCompletedEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        ResetTask();
     }
 }
