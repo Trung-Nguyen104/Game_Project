@@ -55,6 +55,7 @@ namespace Quantum.Prototypes {
     public PlayerRef OwnerPlayer;
     public FP Damage;
     public FP BulletTimeOut;
+    public QBoolean IsFirstTouching;
     partial void MaterializeUser(Frame frame, ref Quantum.BulletInfo result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.BulletInfo component = default;
@@ -65,6 +66,7 @@ namespace Quantum.Prototypes {
         result.OwnerPlayer = this.OwnerPlayer;
         result.Damage = this.Damage;
         result.BulletTimeOut = this.BulletTimeOut;
+        result.IsFirstTouching = this.IsFirstTouching;
         MaterializeUser(frame, ref result, in context);
     }
   }
@@ -86,19 +88,27 @@ namespace Quantum.Prototypes {
   [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.Input))]
   public unsafe partial class InputPrototype : StructPrototype {
-    public FPVector2 mousePosition;
-    public Button PickUpItem;
+    public FPVector2 Direction;
+    public FPVector2 MousePosition;
+    public FPVector2 ShootPointPosition;
+    public FPVector2 ShootPointDirection;
+    public FP ShootPointRotation;
+    public Button PickUpOrProcessTask;
     public Button DropItem;
-    public Button InteracAction;
-    public Button RightMouseClick;
+    public Button UseItemOrShoot;
+    public Button UseSkill;
     public Int32 SelectItem;
     partial void MaterializeUser(Frame frame, ref Quantum.Input result, in PrototypeMaterializationContext context);
     public void Materialize(Frame frame, ref Quantum.Input result, in PrototypeMaterializationContext context = default) {
-        result.mousePosition = this.mousePosition;
-        result.PickUpItem = this.PickUpItem;
+        result.Direction = this.Direction;
+        result.MousePosition = this.MousePosition;
+        result.ShootPointPosition = this.ShootPointPosition;
+        result.ShootPointDirection = this.ShootPointDirection;
+        result.ShootPointRotation = this.ShootPointRotation;
+        result.PickUpOrProcessTask = this.PickUpOrProcessTask;
         result.DropItem = this.DropItem;
-        result.InteracAction = this.InteracAction;
-        result.RightMouseClick = this.RightMouseClick;
+        result.UseItemOrShoot = this.UseItemOrShoot;
+        result.UseSkill = this.UseSkill;
         result.SelectItem = this.SelectItem;
         MaterializeUser(frame, ref result, in context);
     }
@@ -108,7 +118,7 @@ namespace Quantum.Prototypes {
   public unsafe partial class ItemInfoPrototype : ComponentPrototype<Quantum.ItemInfo> {
     public Quantum.Prototypes.ItemProfilePrototype Item;
     [Header("If Item Is Gun")]
-    public Int32 GunAmmo;
+    public Int32 CurrentAmmo;
     public AssetRef<EntityPrototype> BulletPrototype;
     partial void MaterializeUser(Frame frame, ref Quantum.ItemInfo result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
@@ -118,7 +128,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.ItemInfo result, in PrototypeMaterializationContext context = default) {
         this.Item.Materialize(frame, ref result.Item, in context);
-        result.GunAmmo = this.GunAmmo;
+        result.CurrentAmmo = this.CurrentAmmo;
         result.BulletPrototype = this.BulletPrototype;
         MaterializeUser(frame, ref result, in context);
     }
@@ -153,8 +163,8 @@ namespace Quantum.Prototypes {
     public AssetRef<ItemSpawnPosition> ItemSpawnPosition;
     [ArrayLengthAttribute(30)]
     public Quantum.Prototypes.PositionsPrototype[] Positions = new Quantum.Prototypes.PositionsPrototype[30];
-    [ArrayLengthAttribute(3)]
-    public Quantum.Prototypes.ItemSpawnPrototype[] Item = new Quantum.Prototypes.ItemSpawnPrototype[3];
+    [ArrayLengthAttribute(4)]
+    public Quantum.Prototypes.ItemSpawnPrototype[] Item = new Quantum.Prototypes.ItemSpawnPrototype[4];
     partial void MaterializeUser(Frame frame, ref Quantum.ItemSpawner result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.ItemSpawner component = default;
@@ -166,7 +176,7 @@ namespace Quantum.Prototypes {
         for (int i = 0, count = PrototypeValidator.CheckLength(Positions, 30, in context); i < count; ++i) {
           this.Positions[i].Materialize(frame, ref *result.Positions.GetPointer(i), in context);
         }
-        for (int i = 0, count = PrototypeValidator.CheckLength(Item, 3, in context); i < count; ++i) {
+        for (int i = 0, count = PrototypeValidator.CheckLength(Item, 4, in context); i < count; ++i) {
           this.Item[i].Materialize(frame, ref *result.Item.GetPointer(i), in context);
         }
         MaterializeUser(frame, ref result, in context);

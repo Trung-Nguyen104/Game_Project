@@ -20,9 +20,9 @@ MonoBehaviour:
   itemName: Shotgun
   icon: {fileID: 21300000, guid: 4cbd27394b7c4c42a7a716a91583d19b, type: 3}
   damge:
-    RawValue: 3276800
-  ammo:
-    RawValue: 196608
+    RawValue: 1310720
+  maxAmmo:
+    RawValue: 983040
   heal:
     RawValue: 0
   itemQuantity:

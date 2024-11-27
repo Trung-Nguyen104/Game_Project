@@ -16,5 +16,189 @@ MonoBehaviour:
     Path: QuantumUser/Resources/PolygonCollider
     Guid:
       Value: 309888947108699169
-  Vertices: []
+  Vertices:
+  - X:
+      RawValue: -341354
+    Y:
+      RawValue: -295387
+  - X:
+      RawValue: -284702
+    Y:
+      RawValue: -308159
+  - X:
+      RawValue: -242758
+    Y:
+      RawValue: -311412
+  - X:
+      RawValue: -221523
+    Y:
+      RawValue: -306698
+  - X:
+      RawValue: -195818
+    Y:
+      RawValue: -310649
+  - X:
+      RawValue: -157529
+    Y:
+      RawValue: -307375
+  - X:
+      RawValue: -123176
+    Y:
+      RawValue: -299722
+  - X:
+      RawValue: -99424
+    Y:
+      RawValue: -292022
+  - X:
+      RawValue: -84259
+    Y:
+      RawValue: -279762
+  - X:
+      RawValue: -56303
+    Y:
+      RawValue: -274015
+  - X:
+      RawValue: -25152
+    Y:
+      RawValue: -255395
+  - X:
+      RawValue: 3212
+    Y:
+      RawValue: -235017
+  - X:
+      RawValue: 22990
+    Y:
+      RawValue: -207240
+  - X:
+      RawValue: 49192
+    Y:
+      RawValue: -188443
+  - X:
+      RawValue: 69942
+    Y:
+      RawValue: -159347
+  - X:
+      RawValue: 82634
+    Y:
+      RawValue: -135940
+  - X:
+      RawValue: 91451
+    Y:
+      RawValue: -113831
+  - X:
+      RawValue: 103965
+    Y:
+      RawValue: -57741
+  - X:
+      RawValue: 124864
+    Y:
+      RawValue: -57395
+  - X:
+      RawValue: 92232
+    Y:
+      RawValue: -351986
+  - X:
+      RawValue: -708237
+    Y:
+      RawValue: -315530
+  - X:
+      RawValue: -750723
+    Y:
+      RawValue: 47457
+  - X:
+      RawValue: -741087
+    Y:
+      RawValue: 615955
+  - X:
+      RawValue: 221201
+    Y:
+      RawValue: 591275
+  - X:
+      RawValue: 125291
+    Y:
+      RawValue: 47799
+  - X:
+      RawValue: 105579
+    Y:
+      RawValue: 48038
+  - X:
+      RawValue: 96652
+    Y:
+      RawValue: 145663
+  - X:
+      RawValue: 37685
+    Y:
+      RawValue: 231084
+  - X:
+      RawValue: 9429
+    Y:
+      RawValue: 273979
+  - X:
+      RawValue: -139546
+    Y:
+      RawValue: 349359
+  - X:
+      RawValue: -316871
+    Y:
+      RawValue: 351928
+  - X:
+      RawValue: -460588
+    Y:
+      RawValue: 279206
+  - X:
+      RawValue: -539027
+    Y:
+      RawValue: 162801
+  - X:
+      RawValue: -544837
+    Y:
+      RawValue: 34953
+  - X:
+      RawValue: -556646
+    Y:
+      RawValue: 18127
+  - X:
+      RawValue: -556889
+    Y:
+      RawValue: -36017
+  - X:
+      RawValue: -553581
+    Y:
+      RawValue: -79095
+  - X:
+      RawValue: -542178
+    Y:
+      RawValue: -117096
+  - X:
+      RawValue: -522578
+    Y:
+      RawValue: -158243
+  - X:
+      RawValue: -499027
+    Y:
+      RawValue: -189457
+  - X:
+      RawValue: -476421
+    Y:
+      RawValue: -204977
+  - X:
+      RawValue: -467397
+    Y:
+      RawValue: -222541
+  - X:
+      RawValue: -449539
+    Y:
+      RawValue: -238433
+  - X:
+      RawValue: -426695
+    Y:
+      RawValue: -255478
+  - X:
+      RawValue: -395697
+    Y:
+      RawValue: -272926
+  - X:
+      RawValue: -371968
+    Y:
+      RawValue: -276730
   Normals: []

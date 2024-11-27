@@ -2,6 +2,7 @@ namespace Quantum
 {
     using Photon.Deterministic;
     using Quantum.Collections;
+    using UnityEngine;
     using UnityEngine.Scripting;
 
     [Preserve]
@@ -12,8 +13,7 @@ namespace Quantum
         public override void OnInit(Frame frame)
         {
             base.OnInit(frame);
-            frame.Global->playerEntityRef = frame.AllocateList<EntityRef>();
-            listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRef);
+            frame.Global->playerEntityRefList = frame.AllocateList<EntityRef>();
         }
 
         public void OnPlayerAdded(Frame frame, PlayerRef player, bool firstTime)
@@ -24,7 +24,7 @@ namespace Quantum
 
             if (!playerData.HaveRandomSkin)
             {
-                playerData.SkinColor = frame.RNG->Next(0, 5);
+                playerData.SkinColor = frame.Global->RngSession.Next(0, 5);
                 playerData.HaveRandomSkin = true;
             }
 
@@ -32,11 +32,11 @@ namespace Quantum
             playerInfo->PlayerSkinColor = playerData.SkinColor;
             playerInfo->PlayerRef = player;
 
+            listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRefList);
             listPlayerEntityRef.Add(playerEntityRef);
 
-            //temporary
             var playerTransform = frame.Unsafe.GetPointer<Transform2D>(playerEntityRef);
-            playerTransform->Position = new FPVector2(-98, -26);
+            playerTransform->Position = new FPVector2(-63, -4);
         }
 
         public void OnPlayerRemoved(Frame frame, PlayerRef player)

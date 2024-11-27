@@ -1,138 +1,215 @@
 using Photon.Client;
 using Photon.Realtime;
 using Quantum;
+using System;
 using UnityEngine;
 
 enum RoleBehavior : byte
 {
     Monster = 2, 
-    Soldier = 3,
     Doctor = 4,
-    Scientist = 5,
 }
 
 public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
 {
-    [SerializeField] private UnityEngine.LayerMask layerMask;
-    public PlayerRef playerRef { get; private set; }
-    public RuntimePlayer playerData { get; set; }
+    public UnityEngine.LayerMask layerMask;
+    public PlayerRef PlayerRef { get; private set; }
+    public RuntimePlayer PlayerData { get; private set; }
+    public SpriteRenderer SpriteRenderer { get; set; }
 
-    private SpriteRenderer spriteRenderer;
     private RealtimeClient client;
+    private Transform playerTransform;
+    private PlayerTargetView doctorTargeting;
     private Ray ray;
     private RaycastHit2D hitInfo;
+    private PlayerInfo playerInfo;
+    private bool isCoolingDown;
 
     private void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        QuantumEvent.Subscribe(listener: this, handler: (EventIsCoolDown e) => IsCoolDown(e));
+        SpriteRenderer = GetComponent<SpriteRenderer>();
+        playerTransform = transform;
         client = QuantumRunner.Default?.NetworkClient;
         client.AddCallbackTarget(this);
     }
 
-    private bool CheckLocalPlayer() => QuantumRunner.DefaultGame.PlayerIsLocal(playerRef);
-
-    private void Update()
+    private void IsCoolDown(EventIsCoolDown e)
     {
-        playerRef = VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef).PlayerRef;
-        playerData = VerifiedFrame.GetPlayerData(playerRef);
-        if (!CheckLocalPlayer() || playerData.PlayerRole == PlayerRole.Astronaut)
+        if (e.PlayerRef != playerInfo.PlayerRef)
         {
             return;
         }
-        if (playerData.SkillTimer > 0)
+        isCoolingDown = e.IsCoolDown;
+    }
+
+    private void Update()
+    {
+        playerInfo = VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef);
+        PlayerRef = playerInfo.PlayerRef;
+        PlayerData = VerifiedFrame.GetPlayerData(PlayerRef);
+
+        if (PlayerData.CurrHealth <= 0)
         {
-            playerData.SkillTimer -= Time.deltaTime;
-            Debug.Log(playerData.SkillTimer);
+            return;
         }
-        if (playerData.PlayerRole == PlayerRole.Soldier && playerData.CurrHealth <= 0 && !playerData.IsMonsterKill)
+
+        RemoveDoctorTarget();
+
+        if (!CheckLocalPlayer() || PlayerData.PlayerRole == PlayerRole.Astronaut || PlayerData.PlayerRole == PlayerRole.None)
         {
-            Invoke(nameof(SoldierReporn), 15);
+            return;
         }
+
         ray = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
         hitInfo = Physics2D.Raycast(ray.origin, ray.direction, 100, layerMask);
-        if (hitInfo)
+        HandlePlayerRoleTarget();
+    }
+
+    private void HandlePlayerRoleTarget()
+    {
+        if (!TryGetPlayerTarget(hitInfo, out var playerTarget))
         {
-            var playerTarget = hitInfo.collider.GetComponentInChildren<PlayerTargetView>();
-            var spriteRendererTarget = hitInfo.collider.GetComponentInChildren<SpriteRenderer>();
-            if (playerTarget.playerRef == playerRef)
-            {
-                return;
-            }
-            switch (playerData.PlayerRole)
-            {
-                case PlayerRole.Monster:
-                    spriteRendererTarget.color = Color.red;
-                    if (UnityEngine.Input.GetMouseButtonDown(0) && playerData.SkillTimer <= 0)
-                    {
-                        client.OpRaiseEvent((byte)RoleBehavior.Monster, (int)playerTarget.playerRef, new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                        playerData.SkillTimer = 30;
-                    }
-                    break;
-                case PlayerRole.Detective:
-                    spriteRendererTarget.color = Color.gray;
-                    if (UnityEngine.Input.GetMouseButtonDown(0) && playerData.SkillTimer <= 0)
-                    {
-                        Debug.Log(playerTarget.playerData.PlayerRole);
-                        playerData.SkillTimer = 30;
-                    }
-                    break;
-                case PlayerRole.Doctor:
-                    spriteRendererTarget.color = Color.green;
-                    if (UnityEngine.Input.GetMouseButtonDown(0) && playerData.SkillTimer <= 0)
-                    {
-                        client.OpRaiseEvent((byte)RoleBehavior.Doctor, (int)playerTarget.playerRef, new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                        playerData.SkillTimer = 30;
-                    }
-                    break;
-                case PlayerRole.Scientist:
-                    spriteRendererTarget.color = Color.blue;
-                    if (UnityEngine.Input.GetMouseButtonDown(0))
-                    {
-                        client.OpRaiseEvent((byte)RoleBehavior.Scientist, (int)playerTarget.playerRef, new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                    }
-                    break;
-            }
-            
+            return;
+        }
+        if (isCoolingDown || playerTarget.PlayerRef == PlayerRef)
+        {
+            IconSkillManager.Instance.SetIconInteractable(false);
+            return;
+        }
+        switch (PlayerData.PlayerRole)
+        {
+            case PlayerRole.Monster:
+                if (SkillDistance(playerTarget, 3f))
+                {
+                    return;
+                }
+                MonsterTarget(playerTarget);
+                break;
+            case PlayerRole.Detective:
+                if (SkillDistance(playerTarget, 10f))
+                {
+                    return;
+                }
+                DetectiveTarget(playerTarget);
+                break;
+            case PlayerRole.Doctor:
+                if (SkillDistance(playerTarget, 3f))
+                {
+                    return;
+                }
+                DoctorTarget(playerTarget);
+                break;
         }
     }
 
+    private void DoctorTarget(PlayerTargetView playerTarget)
+    {
+        playerTarget.SpriteRenderer.color = Color.green;
+        IconSkillManager.Instance.SetIconInteractable(true);
+
+        if (CheckUseSkillInput())
+        {
+            Debug.Log($"{PlayerData.PlayerRole} inject");
+            if (playerTarget.PlayerData.IsImmunity)
+            {
+                return;
+            }
+            doctorTargeting = playerTarget;
+            PlayerData.SkillTimer = 30;
+            PlayerTargetRaiseEvent((byte)RoleBehavior.Doctor, playerTarget._entityView.EntityRef);
+        }
+    }
+
+    private void RemoveDoctorTarget()
+    {
+        if (doctorTargeting != null)
+        {
+            if (doctorTargeting.PlayerData.IsImmunity)
+            {
+                doctorTargeting.SpriteRenderer.color = Color.green;
+            }
+            else
+            {
+                doctorTargeting.SpriteRenderer.color = Color.white;
+            }
+        }
+    }
+
+    private void DetectiveTarget(PlayerTargetView playerTarget)
+    {
+        playerTarget.SpriteRenderer.color = Color.gray;
+        IconSkillManager.Instance.SetIconInteractable(true);
+
+        if (CheckUseSkillInput())
+        {
+            Debug.Log($"{PlayerData.PlayerRole} detect");
+            Debug.Log(playerTarget.PlayerData.PlayerRole);
+            PlayerData.SkillTimer = 30;
+        }
+    }
+
+    private void MonsterTarget(PlayerTargetView playerTarget)
+    {
+        playerTarget.SpriteRenderer.color = Color.red;
+        IconSkillManager.Instance.SetIconInteractable(true);
+
+        if (CheckUseSkillInput())
+        {
+            Debug.Log($"{PlayerData.PlayerRole} kill");
+            PlayerData.SkillTimer = 30;
+            PlayerTargetRaiseEvent((byte)RoleBehavior.Monster, playerTarget._entityView.EntityRef);
+        }
+    }
+
+    private bool TryGetPlayerTarget(RaycastHit2D hitInfo, out PlayerTargetView playerTarget)
+    {
+        if (hitInfo)
+        {
+            playerTarget = hitInfo.collider.GetComponentInChildren<PlayerTargetView>();
+            return true;
+        }
+        playerTarget = null;
+        return false;
+    }
+
+    private void PlayerTargetRaiseEvent(byte roleEventCode, EntityRef targetRef)
+    {
+        client.OpRaiseEvent(roleEventCode, targetRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+    }
+    private EntityRef GetTargetRef(EventData photonEvent)
+    {
+        EntityRef targetRef = default;
+        if (EntityRef.TryParse((string)photonEvent.CustomData, out var _targetRef))
+        {
+            targetRef = _targetRef;
+        }
+        return targetRef;
+    }
+    private bool CheckLocalPlayer() => QuantumRunner.DefaultGame.PlayerIsLocal(PlayerRef);
+    private bool CheckUseSkillInput() => UnityEngine.Input.GetKeyDown(KeyCode.R);
+    private bool SkillDistance(PlayerTargetView playerTarget, float availableDist) => Vector2.Distance(playerTarget.playerTransform.position, playerTransform.position) > availableDist;
+
     private void OnMouseExit()
     {
-        spriteRenderer.color = Color.white;
+        if (PlayerData.PlayerRole == PlayerRole.None)
+        {
+            return;
+        }
+        SpriteRenderer.color = Color.white;
+        IconSkillManager.Instance.SetIconInteractable(false);
     }
 
     public void OnEvent(EventData photonEvent)
     {
-        RuntimePlayer playerData = null;
         switch (photonEvent.Code)
         {
             case (byte)RoleBehavior.Monster:
-                playerData = VerifiedFrame.GetPlayerData((int)photonEvent.CustomData);
-                if (playerData.PlayerStatus == PlayerStatus.Immunity)
-                {
-                    playerData.PlayerStatus = PlayerStatus.Alive;
-                }
-                else
-                {
-                    playerData.CurrHealth = 0;
-                    //playerData.IsMonsterKill = true;
-                }
+                VerifiedFrame.Signals.OnMonsterKill(GetTargetRef(photonEvent));
                 break;
-            case (byte)RoleBehavior.Soldier:
-                playerData = VerifiedFrame.GetPlayerData((int)photonEvent.CustomData);
-                playerData.CurrHealth = playerData.MaxHealth / 2;
-                break;  
             case (byte)RoleBehavior.Doctor:
-                playerData = VerifiedFrame.GetPlayerData((int)photonEvent.CustomData);
-                playerData.PlayerStatus = PlayerStatus.Immunity;
-                break;
-            case (byte)RoleBehavior.Scientist:
+                VerifiedFrame.Signals.OnDoctorInject(GetTargetRef(photonEvent));
                 break;
         }
-    }
-
-    private void SoldierReporn()
-    {
-        client.OpRaiseEvent((byte)RoleBehavior.Soldier, (int)playerRef, new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
     }
 }

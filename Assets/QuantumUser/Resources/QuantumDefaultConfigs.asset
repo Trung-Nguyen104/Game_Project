@@ -98,7 +98,7 @@ MonoBehaviour:
     StartDisabled: 0
     Children: []
   - SystemType:
-      AssemblyQualifiedName: Quantum.ShootingController, Quantum.Simulation
+      AssemblyQualifiedName: Quantum.PlayerShootingController, Quantum.Simulation
     SystemName: 
     StartDisabled: 0
     Children: []
@@ -123,7 +123,7 @@ MonoBehaviour:
     StartDisabled: 0
     Children: []
   - SystemType:
-      AssemblyQualifiedName: Quantum.TaskController, Quantum.Simulation
+      AssemblyQualifiedName: Quantum.PlayerRoleBehaviour, Quantum.Simulation
     SystemName: 
     StartDisabled: 0
     Children: []
@@ -226,6 +226,7 @@ MonoBehaviour:
     - Wall
     - Objects
     - Items
+    - Bullet
     - 
     - 
     - 
@@ -247,8 +248,7 @@ MonoBehaviour:
     - 
     - 
     - 
-    - 
-    LayerMatrix: ffffffffffffffffffffffffffffffffffffffffffffffffbffbfffffffffffffffffffffffdffffbffbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+    LayerMatrix: fffbfffffffbfffffffbfffffffffffffffbfffffffbffffbffffffffffffffffffbfffffff9ffffc8f8ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
   Navigation:
     DefaultNavMeshAgent:
       Id:

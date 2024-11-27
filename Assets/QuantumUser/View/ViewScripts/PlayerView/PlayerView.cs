@@ -3,41 +3,54 @@ namespace Quantum
     using Photon.Deterministic;
     using UnityEngine;
     using UnityEngine.Rendering.Universal;
+    using UnityEngine.UI;
 
     public unsafe class PlayerView : QuantumEntityViewComponent
     {
+        public Transform shootPointTransform;
+        public GameObject miniMapIcon;
+
         private PlayerInfo playerInfo;
-        private Transform2D transform2D;
         private Vector3 mousePosition;
-        private Animator animator;
+        private RuntimePlayer playerData;
         private Light2D spotLight;
-        private bool facingLeft = true;
 
         private void Start()
         {
+            QuantumEvent.Subscribe(listener: this, handler: (EventIsPlayerHitBullet e) => HandlePlayerHitBullet(e));
             QuantumCallback.Subscribe(this, (CallbackPollInput callback) => PollInput(callback));
-            QuantumEvent.Subscribe(listener: this, handler: (EventIsMoving e) => IsMoving(e));
             spotLight = GetComponentInChildren<Light2D>();
-            animator = GetComponentInChildren<Animator>(); 
         }
 
         private void Update()
         {
             playerInfo = VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef);
-            transform2D = VerifiedFrame.Get<Transform2D>(_entityView.EntityRef);
+            playerData = VerifiedFrame.GetPlayerData(playerInfo.PlayerRef);
 
-            RotationController(VerifiedFrame.GetPlayerInput(playerInfo.PlayerRef)->mousePosition.X);
+            SetActivePlayerMiniMapIcon();
             CheckOwnerLight();
             CameraHandler();
         }
 
+        private void SetActivePlayerMiniMapIcon()
+        {
+            if (playerData.PlayerRole != PlayerRole.Engineer)
+            {
+                miniMapIcon.SetActive(false);
+            }
+            else
+            {
+                miniMapIcon.SetActive(true);
+            }
+        }
+
         private bool CheckLocalPlayer() => QuantumRunner.DefaultGame.PlayerIsLocal(playerInfo.PlayerRef);
 
-        public void IsMoving(EventIsMoving e)
+        private void HandlePlayerHitBullet(EventIsPlayerHitBullet e)
         {
-            if (e.PlayerRef == playerInfo.PlayerRef)
+            if (playerInfo.PlayerRef == e.PlayerRef)
             {
-                animator.SetBool("isMoving", e.isMoving);
+                VerifiedFrame.GetPlayerData(e.PlayerRef).CurrHealth -= e.Damage;
             }
         }
 
@@ -54,45 +67,35 @@ namespace Quantum
             }
         }
 
-        public void Flip()
-        {
-            facingLeft = !facingLeft;
-            animator.transform.Rotate(0, 180, 0);
-        }
-
-        public void RotationController(FP mousePosition)
-        {
-            if (mousePosition < transform2D.Position.X && !facingLeft || mousePosition > transform2D.Position.X && facingLeft)
-            {
-                Flip();
-            }
-        }
-
         public void PollInput(CallbackPollInput callback)
         {
-            if (!CheckLocalPlayer())
+            if (!CheckLocalPlayer() || playerData.CurrHealth <= 0)
             {
                 return;
             }
 
             mousePosition = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
-
+            var inputX = UnityEngine.Input.GetAxisRaw("Horizontal");
+            var inputY = UnityEngine.Input.GetAxisRaw("Vertical");
             Input input = new()
             {
-                PickUpItem = UnityEngine.Input.GetKey(KeyCode.E),
-                DropItem = UnityEngine.Input.GetKey(KeyCode.Q),
-                InteracAction = UnityEngine.Input.GetMouseButton(0),
                 SelectItem = InputSelectIndex(),
-                mousePosition = mousePosition.ToFPVector2(),
-                RightMouseClick = UnityEngine.Input.GetMouseButton(1),
+                PickUpOrProcessTask = UnityEngine.Input.GetKey(KeyCode.E),
+                DropItem = UnityEngine.Input.GetKey(KeyCode.Q),
+                UseSkill = UnityEngine.Input.GetKey(KeyCode.R),
+                MousePosition = mousePosition.ToFPVector2(),
+                ShootPointPosition = shootPointTransform.position.ToFPVector2(),
+                ShootPointDirection = shootPointTransform.right.ToFPVector2(),
+                ShootPointRotation = shootPointTransform.rotation.ToFPRotation2D(),
+                Direction = new Vector2(inputX, inputY).ToFPVector2(),
+                UseItemOrShoot = UnityEngine.Input.GetMouseButton(0),
             };
-
             callback.SetInput(input, DeterministicInputFlags.Repeatable);
         }
 
         private int InputSelectIndex()
         {
-            int selectIndex = 0;
+            int selectIndex = -1;
             if (UnityEngine.Input.GetKey(KeyCode.Alpha1))
             {
                 selectIndex = 1;

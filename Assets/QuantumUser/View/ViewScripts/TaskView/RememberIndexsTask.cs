@@ -14,6 +14,7 @@ public class RememberIndexsTask : MonoBehaviour
     public Image[] leftButtons;
     public Image[] lights;
     public UnityEngine.UI.Button[] rightButtons;
+    public UnityEngine.UI.Button closeTaskButton;
     public float highlightDuration = 1f;
     public int totalRounds = 6;
 
@@ -22,8 +23,9 @@ public class RememberIndexsTask : MonoBehaviour
     private int currentRound = 0;
     private int playerProgress = 0;
 
-    void Start()
+    private void Start()
     {
+        closeTaskButton.onClick.AddListener(() => CloseTask());
         originalTaskText = taskStatus.text;
         taskStatus.text = "Ready....";
         ResetTask();
@@ -56,10 +58,9 @@ public class RememberIndexsTask : MonoBehaviour
     private void CompletedTask()
     {
         taskStatus.text = "Task Completed !!";
-        gameObject.SetActive(false);
         var client = QuantumRunner.Default.NetworkClient;
-        client.OpRaiseEvent((byte)TaskCompletedEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-        ResetTask();
+        client.OpRaiseEvent((byte)TaskEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        CloseTask();
     }
 
     private void ResetTask()
@@ -141,5 +142,11 @@ public class RememberIndexsTask : MonoBehaviour
     {
         sequence.Clear();
         playerProgress = 0;
+    }
+
+    private void CloseTask()
+    {
+        ResetTask();
+        gameObject.SetActive(false);
     }
 }

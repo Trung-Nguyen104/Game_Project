@@ -1,11 +1,14 @@
 using Quantum;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour
 {
     public static InventorySlot Instance { get => instance; }
-    private static InventorySlot instance;
     public ItemSlotsView[] itemSlots;
+    public Image inventoryParent;
+    
+    private static InventorySlot instance;
 
     private void Awake()
     {
@@ -14,6 +17,5 @@ public class InventorySlot : MonoBehaviour
             return;
         }
         instance = this;
-        itemSlots = GetComponentsInChildren<ItemSlotsView>();
     }
 }

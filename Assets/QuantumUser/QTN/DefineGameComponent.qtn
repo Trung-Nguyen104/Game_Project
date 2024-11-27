@@ -1,10 +1,14 @@
 input
 {
-	FPVector2 mousePosition;
-	Button PickUpItem;
+	FPVector2 Direction;
+	FPVector2 MousePosition;
+	FPVector2 ShootPointPosition;
+    FPVector2 ShootPointDirection;
+    FP ShootPointRotation;
+	Button PickUpOrProcessTask;
 	Button DropItem;
-	Button InteracAction;
-	Button RightMouseClick;
+	Button UseItemOrShoot;
+	Button UseSkill;
 	Int32 SelectItem;
 }
 
@@ -13,7 +17,7 @@ input
 
 global
 {
-	list<entity_ref> playerEntityRef;
+	list<entity_ref> playerEntityRefList;
 }
 
 component PlayerInfo
@@ -37,7 +41,7 @@ component ItemInfo
 {
 	ItemProfile Item;
 	[Header("If Item Is Gun")]
-	Int32 GunAmmo;
+	Int32 CurrentAmmo;
 	AssetRef<EntityPrototype> BulletPrototype;
 }
 
@@ -45,7 +49,7 @@ component ItemSpawner
 {
 	AssetRef<ItemSpawnPosition> ItemSpawnPosition;
 	array<Positions>[30] Positions;
-	array<ItemSpawn>[3] Item;
+	array<ItemSpawn>[4] Item;
 }
 
 component BulletInfo
@@ -53,6 +57,7 @@ component BulletInfo
 	player_ref OwnerPlayer;
 	FP Damage;
 	FP BulletTimeOut;
+	bool IsFirstTouching;
 }
 
 component PlayerRoleManager
@@ -99,7 +104,7 @@ enum PlayerRole
 {
 	None,
 	Monster, 
-	Scientist, 
+	TheImmortal, 
 	Engineer, 
 	Doctor, 
 	Astronaut, 
@@ -108,20 +113,12 @@ enum PlayerRole
 	Detective
 }
 
-enum PlayerStatus
-{
-	Alive,
-	Death,
-	Ghost,
-	Immunity
-}
-
 enum GameState
 {
 	Waiting,
 	GameStarting,
 	GameStarted,
-	GameEnded,
+	GameEnding,
 }
 
 enum TaskType
@@ -171,6 +168,26 @@ event InitiatingTask
 	TaskType TaskType;
 }
 
+event IsPlayerDeaded
+{
+	player_ref PlayerRef;
+	bool IsPlayerDead;
+}
+
+event IsCoolDown
+{
+	player_ref PlayerRef;
+	bool IsCoolDown;
+}
+
+event IsPlayerHitBullet
+{
+	player_ref PlayerRef;
+	FP Damage;
+}
+
 signal OnPickUpItem (FPVector2 Position);
 signal OnUseItem (ItemInfo ItemInfo);
 signal OnLoadPosition (FPVector2 Position);
+signal OnMonsterKill (entity_ref TargetRef);
+signal OnDoctorInject (entity_ref TargetRef);

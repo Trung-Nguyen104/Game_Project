@@ -16,34 +16,41 @@ namespace Quantum
         {
             var playerData = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
             var input = frame.GetPlayerInput(filter.PlayerInfo->PlayerRef);
+            if (filter.PlayerInfo->CurrSelectItem < 0)
+            {
+                return;
+            }
             var currItem = filter.PlayerInfo->Inventory[filter.PlayerInfo->CurrSelectItem];
 
-            if (input->InteracAction.WasPressed && frame.TryFindAsset(currItem.Item.ItemData, out var item))
+            if (!frame.TryFindAsset(currItem.Item.ItemData, out var item))
             {
-                if (item.itemType == ItemType.Weapon && currItem.GunAmmo > 0)
-                {
-                    filter.PlayerInfo->Inventory[filter.PlayerInfo->CurrSelectItem].GunAmmo -= 1;
-                    SetUpBulletPrototype(frame, filter, playerData, currItem, item);
-                }
+                return;
+            }
+            if (item.itemType != ItemType.Weapon /*|| currItem.CurrentAmmo <= 0*/)
+            {
+                return;
+            }
+            if (input->UseItemOrShoot.WasPressed)
+            {
+                Debug.Log($"{filter.PlayerInfo->PlayerRef} Shooting");
+                filter.PlayerInfo->Inventory[filter.PlayerInfo->CurrSelectItem].CurrentAmmo -= 1;
+                SetUpBulletPrototype(frame, filter, input, currItem, item);
             }
         }
 
-        private static void SetUpBulletPrototype(Frame frame, Filter filter, RuntimePlayer playerLocal, ItemInfo currItem, ItemData item)
+        private void SetUpBulletPrototype(Frame frame, Filter filter, Input* input, ItemInfo currItem, ItemData item)
         {
             var bulletRef = frame.Create(currItem.BulletPrototype);
-            var bulletTransform = frame.Get<Transform2D>(bulletRef);
-            var bulletPhysis2D = frame.Get<PhysicsBody2D>(bulletRef);
-            var bulletInfo = frame.Get<BulletInfo>(bulletRef);
+            var bulletTransform = frame.Unsafe.GetPointer<Transform2D>(bulletRef);
+            var bulletPhysis2D = frame.Unsafe.GetPointer<PhysicsBody2D>(bulletRef);
+            var bulletInfo = frame.Unsafe.GetPointer<BulletInfo>(bulletRef);
 
-            bulletPhysis2D.AddLinearImpulse(playerLocal.ShootPointDirection * 70);
-            bulletTransform.Rotation = playerLocal.ShootPointRotation;
-            bulletTransform.Position = playerLocal.ShootPointPosition;
-            bulletInfo.OwnerPlayer = filter.PlayerInfo->PlayerRef;
-            bulletInfo.Damage = item.damge;
-
-            frame.Set(bulletRef, bulletTransform);
-            frame.Set(bulletRef, bulletPhysis2D);
-            frame.Set(bulletRef, bulletInfo);
+            bulletInfo->IsFirstTouching = false;
+            bulletInfo->Damage = item.damge;
+            bulletInfo->OwnerPlayer = filter.PlayerInfo->PlayerRef;
+            bulletTransform->Rotation = input->ShootPointRotation;
+            bulletTransform->Position = input->ShootPointPosition;
+            bulletPhysis2D->AddLinearImpulse(input->ShootPointDirection * 20);
         }
     }
 }

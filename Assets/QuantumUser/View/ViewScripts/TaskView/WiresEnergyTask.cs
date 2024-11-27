@@ -14,26 +14,27 @@ public class WiresEnergyTask : MonoBehaviour
     public List<GameObject> rightWires;
 
     [Header("UI Elements")]
+    public UnityEngine.UI.Button closeTaskButton;
     public TMP_Text statusText;
 
     private Dictionary<GameObject, Color> leftWireMapping;
     private Dictionary<GameObject, Color> rightWireMapping;
-    private bool isTaskCompleted = false;
+    
 
     [Header("Connection Settings")]
     public float connectThreshold = 140f;
 
     public EntityRef TaskRef { get; set; }
 
-    void Start()
+    private void Start()
     {
+        closeTaskButton.onClick.AddListener(() => CloseTask());
         ResetTask();
     }
 
-    public void ResetTask()
+    private void ResetTask()
     {
         statusText.text = "Task Incomplete";
-        isTaskCompleted = false;
 
         List<Color> shuffledColors = new(wireColors);
         ShuffleList(shuffledColors);
@@ -47,6 +48,7 @@ public class WiresEnergyTask : MonoBehaviour
             leftWireMapping[leftWires[i]] = shuffledColors[i];
             WireStartOf(leftWires[i]).color = shuffledColors[i];
             WireEndOf(leftWires[i]).color = shuffledColors[i];
+            ResetWire(leftWires[i]);
         }
 
         ShuffleList(shuffledColors);
@@ -56,16 +58,12 @@ public class WiresEnergyTask : MonoBehaviour
             rightWireMapping[rightWires[i]] = shuffledColors[i];
             WireStartOf(rightWires[i]).color = shuffledColors[i];
             WireEndOf(rightWires[i]).color = shuffledColors[i];
+            ResetWire(rightWires[i]);
         }
     }
 
     public void ConnectWires(GameObject leftWire, GameObject rightWire)
     {
-        if (isTaskCompleted)
-        {
-            return;
-        }
-
         if (leftWireMapping[leftWire] == rightWireMapping[rightWire])
         {
             LightOf(rightWire).color = Color.yellow;
@@ -84,26 +82,31 @@ public class WiresEnergyTask : MonoBehaviour
             }
         }
 
-        isTaskCompleted = true;
         statusText.text = "Task Completed: DONE!";
-        gameObject.SetActive(false);
         var client = QuantumRunner.Default.NetworkClient;
-        client.OpRaiseEvent((byte)TaskCompletedEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-        ResetTask();
+        client.OpRaiseEvent((byte)TaskEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        CloseTask();
     }
 
     private Image LightOf(GameObject wireGameObject) => wireGameObject.transform.Find("Light").GetComponent<Image>();
     private Image WireStartOf(GameObject wireGameObject) => wireGameObject.transform.Find("WireStart").GetComponent<Image>();
     private Image WireEndOf(GameObject wireGameObject) => wireGameObject.transform.Find("WireEnd").GetComponent<Image>();
+    private void ResetWire(GameObject wireGameObject) => wireGameObject.GetComponentInChildren<Wire>().ResetPosition();
 
     private void ShuffleList(List<Color> list)
     {
         for (int i = 0; i < list.Count; i++)
         {
             int randomIndex = Random.Range(0, list.Count);
-            Color temp = list[i];
+            var temp = list[i];
             list[i] = list[randomIndex];
             list[randomIndex] = temp;
         }
+    }
+
+    private void CloseTask()
+    {
+        ResetTask();
+        gameObject.SetActive(false);
     }
 }

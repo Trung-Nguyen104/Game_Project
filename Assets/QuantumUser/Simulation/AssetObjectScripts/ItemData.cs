@@ -6,6 +6,7 @@ namespace Quantum
     public enum ItemType
     {
         Weapon,
+        Ammo,
         Tool,
         Heal
     }
@@ -15,7 +16,7 @@ namespace Quantum
         public string itemName;
         public Sprite icon;
         public FP damge;
-        public FP ammo;
+        public FP maxAmmo;
         public FP heal;
         public FP itemQuantity;
         public FP respawnTime;

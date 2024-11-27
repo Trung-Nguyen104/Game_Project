@@ -4,9 +4,7 @@ namespace Quantum
 
     public class PlayerAimView : QuantumEntityViewComponent
     {
-        public Transform shootPointTransform;
         private Transform aimTransform;
-        private RuntimePlayer playerData;
         private const float maxAngle = 90;
 
         private void Start()
@@ -17,15 +15,6 @@ namespace Quantum
         private void Update()
         {
             AimingController();
-            SetUpShootPoint();
-        }
-
-        private void SetUpShootPoint()
-        {
-            playerData = VerifiedFrame.GetPlayerData(VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef).PlayerRef);
-            playerData.ShootPointPosition = shootPointTransform.position.ToFPVector2();
-            playerData.ShootPointDirection = shootPointTransform.right.ToFPVector2();
-            playerData.ShootPointRotation = shootPointTransform.rotation.ToFPRotation2D();
         }
 
         private void AimingController()

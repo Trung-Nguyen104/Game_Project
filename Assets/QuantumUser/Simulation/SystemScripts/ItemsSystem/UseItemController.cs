@@ -1,15 +1,11 @@
 namespace Quantum
 {
-    using Photon.Deterministic;
+    using UnityEngine;
     using UnityEngine.Scripting;
 
     [Preserve]
     public unsafe class UseItemController : SystemMainThreadFilter<UseItemController.Filter>
     {
-        private RuntimePlayer playerData;
-        private Input* input;
-        private ItemInfo currItem;
-
         public struct Filter
         {
             public EntityRef Entity;
@@ -18,19 +14,24 @@ namespace Quantum
 
         public override void Update(Frame frame, ref Filter filter)
         {
-            playerData = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
-            input = frame.GetPlayerInput(filter.PlayerInfo->PlayerRef);
-            currItem = filter.PlayerInfo->Inventory[filter.PlayerInfo->CurrSelectItem];
+            var playerData = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
+            var input = frame.GetPlayerInput(filter.PlayerInfo->PlayerRef);
+            if (filter.PlayerInfo->CurrSelectItem < 0)
+            {
+                return;
+            }
+            var currItem = filter.PlayerInfo->Inventory[filter.PlayerInfo->CurrSelectItem];
 
-            if (input->InteracAction.WasPressed && frame.TryFindAsset(currItem.Item.ItemData, out var item))
-            {   
-                if(item.itemType == ItemType.Weapon)
-                {
-                    return;
-                }
+            if (!frame.TryFindAsset(currItem.Item.ItemData, out var item) || item.itemType == ItemType.Weapon)
+            {
+                return;
+            }
+            if (input->UseItemOrShoot.IsDown)
+            {
+                Debug.Log($"{filter.PlayerInfo->PlayerRef} UseItem");
                 if (item.itemType == ItemType.Heal)
                 {
-                    playerData.CurrHealth += item.heal.AsInt;
+                    playerData.CurrHealth += item.heal;
                     frame.Events.RemoveItem(filter.PlayerInfo->PlayerRef, filter.PlayerInfo->CurrSelectItem, item);
                     frame.Signals.OnUseItem(currItem);
                 }

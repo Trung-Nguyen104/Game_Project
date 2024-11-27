@@ -52,7 +52,7 @@ namespace Quantum {
   public unsafe partial class Frame {
     public unsafe partial struct FrameEvents {
       static partial void GetEventTypeCountCodeGen(ref Int32 eventCount) {
-        eventCount = 7;
+        eventCount = 10;
       }
       static partial void GetParentEventIDCodeGen(Int32 eventID, ref Int32 parentEventID) {
         switch (eventID) {
@@ -67,6 +67,9 @@ namespace Quantum {
           case EventIsMoving.ID: result = typeof(EventIsMoving); return;
           case EventIsHighLight.ID: result = typeof(EventIsHighLight); return;
           case EventInitiatingTask.ID: result = typeof(EventInitiatingTask); return;
+          case EventIsPlayerDeaded.ID: result = typeof(EventIsPlayerDeaded); return;
+          case EventIsCoolDown.ID: result = typeof(EventIsCoolDown); return;
+          case EventIsPlayerHitBullet.ID: result = typeof(EventIsPlayerHitBullet); return;
           default: break;
         }
       }
@@ -113,6 +116,27 @@ namespace Quantum {
         ev.PlayerRef = PlayerRef;
         ev.TaskRef = TaskRef;
         ev.TaskType = TaskType;
+        _f.AddEvent(ev);
+        return ev;
+      }
+      public EventIsPlayerDeaded IsPlayerDeaded(PlayerRef PlayerRef, QBoolean IsPlayerDead) {
+        var ev = _f.Context.AcquireEvent<EventIsPlayerDeaded>(EventIsPlayerDeaded.ID);
+        ev.PlayerRef = PlayerRef;
+        ev.IsPlayerDead = IsPlayerDead;
+        _f.AddEvent(ev);
+        return ev;
+      }
+      public EventIsCoolDown IsCoolDown(PlayerRef PlayerRef, QBoolean IsCoolDown) {
+        var ev = _f.Context.AcquireEvent<EventIsCoolDown>(EventIsCoolDown.ID);
+        ev.PlayerRef = PlayerRef;
+        ev.IsCoolDown = IsCoolDown;
+        _f.AddEvent(ev);
+        return ev;
+      }
+      public EventIsPlayerHitBullet IsPlayerHitBullet(PlayerRef PlayerRef, FP Damage) {
+        var ev = _f.Context.AcquireEvent<EventIsPlayerHitBullet>(EventIsPlayerHitBullet.ID);
+        ev.PlayerRef = PlayerRef;
+        ev.Damage = Damage;
         _f.AddEvent(ev);
         return ev;
       }
@@ -284,6 +308,87 @@ namespace Quantum {
         hash = hash * 31 + PlayerRef.GetHashCode();
         hash = hash * 31 + TaskRef.GetHashCode();
         hash = hash * 31 + TaskType.GetHashCode();
+        return hash;
+      }
+    }
+  }
+  public unsafe partial class EventIsPlayerDeaded : EventBase {
+    public new const Int32 ID = 7;
+    public PlayerRef PlayerRef;
+    public QBoolean IsPlayerDead;
+    protected EventIsPlayerDeaded(Int32 id, EventFlags flags) : 
+        base(id, flags) {
+    }
+    public EventIsPlayerDeaded() : 
+        base(7, EventFlags.Server|EventFlags.Client) {
+    }
+    public new QuantumGame Game {
+      get {
+        return (QuantumGame)base.Game;
+      }
+      set {
+        base.Game = value;
+      }
+    }
+    public override Int32 GetHashCode() {
+      unchecked {
+        var hash = 67;
+        hash = hash * 31 + PlayerRef.GetHashCode();
+        hash = hash * 31 + IsPlayerDead.GetHashCode();
+        return hash;
+      }
+    }
+  }
+  public unsafe partial class EventIsCoolDown : EventBase {
+    public new const Int32 ID = 8;
+    public PlayerRef PlayerRef;
+    public QBoolean IsCoolDown;
+    protected EventIsCoolDown(Int32 id, EventFlags flags) : 
+        base(id, flags) {
+    }
+    public EventIsCoolDown() : 
+        base(8, EventFlags.Server|EventFlags.Client) {
+    }
+    public new QuantumGame Game {
+      get {
+        return (QuantumGame)base.Game;
+      }
+      set {
+        base.Game = value;
+      }
+    }
+    public override Int32 GetHashCode() {
+      unchecked {
+        var hash = 71;
+        hash = hash * 31 + PlayerRef.GetHashCode();
+        hash = hash * 31 + IsCoolDown.GetHashCode();
+        return hash;
+      }
+    }
+  }
+  public unsafe partial class EventIsPlayerHitBullet : EventBase {
+    public new const Int32 ID = 9;
+    public PlayerRef PlayerRef;
+    public FP Damage;
+    protected EventIsPlayerHitBullet(Int32 id, EventFlags flags) : 
+        base(id, flags) {
+    }
+    public EventIsPlayerHitBullet() : 
+        base(9, EventFlags.Server|EventFlags.Client) {
+    }
+    public new QuantumGame Game {
+      get {
+        return (QuantumGame)base.Game;
+      }
+      set {
+        base.Game = value;
+      }
+    }
+    public override Int32 GetHashCode() {
+      unchecked {
+        var hash = 73;
+        hash = hash * 31 + PlayerRef.GetHashCode();
+        hash = hash * 31 + Damage.GetHashCode();
         return hash;
       }
     }

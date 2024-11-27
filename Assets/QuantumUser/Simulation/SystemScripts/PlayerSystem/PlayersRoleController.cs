@@ -20,51 +20,44 @@ namespace Quantum
             public PlayerRoleManager* RoleManager;
         }
 
-        public override void OnInit(Frame frame)
-        {
-            base.OnInit(frame);
-            listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRef);
-        }
-
         public override void Update(Frame frame, ref Filter filter)
         {
             gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
             if (gameSession->GameState == GameState.Waiting)
             {
+                return;
+            }
+            if (gameSession->GameState == GameState.GameEnding)
+            {
                 ResetPlayersRole(frame, filter);
                 return;
             }
-            HandleGameStart(frame, filter);
+            SetUpPlayersRole(frame, filter);
         }
 
-        private void HandleGameStart(Frame frame, Filter filter)
-        {
-            for (int i = 0; i < listPlayerEntityRef.Count; i++)
-            {
-                playerInfo = frame.Unsafe.GetPointer<PlayerInfo>(listPlayerEntityRef[i]);
-                var playerData = frame.GetPlayerData(playerInfo->PlayerRef);
-                if (gameSession->GameState == GameState.GameStarted)
-                {
-                    SetUpPlayersRole(frame, filter, playerData);
-                    if (i == listPlayerEntityRef.Count - 1)
-                    {
-                        allPlayerHaveRole = true;
-                        resetAllRole = false;
-                    }
-                }
-            }
-        }
-
-        private void SetUpPlayersRole(Frame frame, Filter filter, RuntimePlayer playerData)
+        private void SetUpPlayersRole(Frame frame, Filter filter)
         {
             if (allPlayerHaveRole)
             {
                 return;
             }
+            listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRefList);
+            for (int i = 0; i < listPlayerEntityRef.Count; i++)
+            {
+                playerInfo = frame.Unsafe.GetPointer<PlayerInfo>(listPlayerEntityRef[i]);
+                var playerData = frame.GetPlayerData(playerInfo->PlayerRef);
+                HandleRandomRole(frame, filter, playerData);
+            }
+            allPlayerHaveRole = true;
+            resetAllRole = false;
+        }
+
+        private void HandleRandomRole(Frame frame, Filter filter, RuntimePlayer playerData)
+        {
             while (playerData.PlayerRole == PlayerRole.None)
             {
                 var roleProfiles = filter.RoleManager->RoleProfiles;
-                var randomRole = frame.RNG->Next(0, roleProfiles.Length);
+                var randomRole = frame.Global->RngSession.Next(0, roleProfiles.Length);
                 if (roleProfiles[randomRole].RoleQuantity > 0 && roleProfiles[randomRole].PlayerRole != PlayerRole.None)
                 {
                     playerData.PlayerRole = roleProfiles[randomRole].PlayerRole;
@@ -80,6 +73,7 @@ namespace Quantum
             {
                 return;
             }
+            listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRefList);
             for (int i = 0; i < listPlayerEntityRef.Count; i++)
             {
                 playerInfo = frame.Unsafe.GetPointer<PlayerInfo>(listPlayerEntityRef[i]);

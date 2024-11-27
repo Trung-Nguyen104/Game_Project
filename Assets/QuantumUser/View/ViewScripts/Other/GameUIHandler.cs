@@ -1,6 +1,10 @@
 using Photon.Client;
+using Photon.Deterministic;
 using Photon.Realtime;
 using Quantum;
+using System;
+using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 
 enum GameSessionCode : byte
@@ -9,33 +13,34 @@ enum GameSessionCode : byte
     GameEnd = 1,
 }
 
-public unsafe class GameUIHandler : QuantumMonoBehaviour, IOnEventCallback
+public class GameUIHandler : QuantumEntityViewComponent, IOnEventCallback
 {
-    [SerializeField] private UnityEngine.UI.Button startGameButton;
-    [SerializeField] private UnityEngine.UI.Button endGameButton;
-    private Frame frame;
+    public UnityEngine.UI.Button startGameButton;
+    public UnityEngine.UI.Button endGameButton;
+
     private RealtimeClient client;
-    private GameSession* gameSession;
+    private unsafe GameSession* gameSession;
 
     private void Start()
     {
-        frame = QuantumRunner.DefaultGame?.Frames?.Verified;
         client = QuantumRunner.Default?.NetworkClient;
         client.AddCallbackTarget(this);
+        startGameButton.onClick.AddListener(() => StartGamePressed());
+        endGameButton.onClick.AddListener(() => EndGamePressed());
         Debug.Log($"Client {client.State} {client.CurrentRoom.Name}");
     }
 
-    private void Update()
+    private unsafe void Update()
     {
-        frame.Unsafe.TryGetPointerSingleton(out gameSession);
+        VerifiedFrame.Unsafe.TryGetPointerSingleton(out gameSession);
 
         StartGameButton();
         EndGameButton();
     }
 
-    private void StartGameButton()
+    private unsafe void StartGameButton()
     {
-        if (!client.LocalPlayer.IsMasterClient || gameSession->GameState == GameState.GameStarted)
+        if (!client.LocalPlayer.IsMasterClient || gameSession->GameState != GameState.Waiting)
         {
             startGameButton.gameObject.SetActive(false);
         }
@@ -45,7 +50,7 @@ public unsafe class GameUIHandler : QuantumMonoBehaviour, IOnEventCallback
         }
     }
 
-    private void EndGameButton()
+    private unsafe void EndGameButton()
     {
         if (!client.LocalPlayer.IsMasterClient || gameSession->GameState != GameState.GameStarted)
         {
@@ -76,22 +81,34 @@ public unsafe class GameUIHandler : QuantumMonoBehaviour, IOnEventCallback
         }
     }
 
-    public void OnEvent(EventData photonEvent)
+    public async void OnEvent(EventData photonEvent)
     {
         switch (photonEvent.Code)
         {
             case (byte)GameSessionCode.GameStart:
-                gameSession->GameState = GameState.GameStarting;
-                Invoke(nameof(StartGame), 2f);
+                await WaitFor(1, StartingGame);
+                await WaitFor(2, StartGame);
                 break;
             case (byte)GameSessionCode.GameEnd:
-                gameSession->GameState = GameState.GameEnded;
-                Invoke(nameof(BackToWaitingState), 2f);
+                await WaitFor(1, EndingGame);
+                await WaitFor(2, BackToWaitingState);
                 break;
         }
     }
 
-    private void StartGame() => gameSession->GameState = GameState.GameStarted;
+    private unsafe void StartingGame() => gameSession->GameState = GameState.GameStarting;
+    private unsafe void StartGame() => gameSession->GameState = GameState.GameStarted;
+    private unsafe void EndingGame() => gameSession->GameState = GameState.GameEnding;
+    private unsafe void BackToWaitingState() => gameSession->GameState = GameState.Waiting;
 
-    private void BackToWaitingState() => gameSession->GameState = GameState.Waiting;
+    public async Task WaitFor(FP delayInSeconds, Action callback)
+    {
+        var targetTick = VerifiedFrame.Number + (int)(delayInSeconds / VerifiedFrame.DeltaTime);
+
+        while (VerifiedFrame.Number < targetTick)
+        {
+            await Task.Yield();
+        }
+        callback.Invoke();
+    }
 }

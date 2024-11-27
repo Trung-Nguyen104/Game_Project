@@ -1,0 +1,204 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1062997280, guid: b156eeaae3f741b40af66649a4748430, type: 3}
+  m_Name: New Polygon Collider
+  m_EditorClassIdentifier: 
+  Identifier:
+    Path: QuantumUser/Resources/New Polygon Collider
+    Guid:
+      Value: 460217335139086786
+  Vertices: []
+  Normals:
+  - X:
+      RawValue: -14414
+    Y:
+      RawValue: -63932
+  - X:
+      RawValue: -5068
+    Y:
+      RawValue: -65341
+  - X:
+      RawValue: 14202
+    Y:
+      RawValue: -63980
+  - X:
+      RawValue: -9957
+    Y:
+      RawValue: -64776
+  - X:
+      RawValue: 5583
+    Y:
+      RawValue: -65299
+  - X:
+      RawValue: 14250
+    Y:
+      RawValue: -63968
+  - X:
+      RawValue: 20210
+    Y:
+      RawValue: -62343
+  - X:
+      RawValue: 41202
+    Y:
+      RawValue: -50966
+  - X:
+      RawValue: 13196
+    Y:
+      RawValue: -64194
+  - X:
+      RawValue: 33624
+    Y:
+      RawValue: -56254
+  - X:
+      RawValue: 38238
+    Y:
+      RawValue: -53225
+  - X:
+      RawValue: 53387
+    Y:
+      RawValue: -38014
+  - X:
+      RawValue: 38201
+    Y:
+      RawValue: -53251
+  - X:
+      RawValue: 53358
+    Y:
+      RawValue: -38053
+  - X:
+      RawValue: 57611
+    Y:
+      RawValue: -31239
+  - X:
+      RawValue: 60874
+    Y:
+      RawValue: -24277
+  - X:
+      RawValue: 63963
+    Y:
+      RawValue: -14271
+  - X:
+      RawValue: 1084
+    Y:
+      RawValue: -65528
+  - X:
+      RawValue: -65139
+    Y:
+      RawValue: 7215
+  - X:
+      RawValue: 2981
+    Y:
+      RawValue: 65468
+  - X:
+      RawValue: 65091
+    Y:
+      RawValue: 7618
+  - X:
+      RawValue: 65526
+    Y:
+      RawValue: -1111
+  - X:
+      RawValue: -1681
+    Y:
+      RawValue: -65515
+  - X:
+      RawValue: -64540
+    Y:
+      RawValue: 11389
+  - X:
+      RawValue: 794
+    Y:
+      RawValue: 65531
+  - X:
+      RawValue: 65264
+    Y:
+      RawValue: 5967
+  - X:
+      RawValue: 53934
+    Y:
+      RawValue: 37231
+  - X:
+      RawValue: 54729
+    Y:
+      RawValue: 36051
+  - X:
+      RawValue: 29588
+    Y:
+      RawValue: 58476
+  - X:
+      RawValue: 949
+    Y:
+      RawValue: 65529
+  - X:
+      RawValue: -29590
+    Y:
+      RawValue: 58476
+  - X:
+      RawValue: -54349
+    Y:
+      RawValue: 36622
+  - X:
+      RawValue: -65469
+    Y:
+      RawValue: 2975
+  - X:
+      RawValue: -53644
+    Y:
+      RawValue: 37648
+  - X:
+      RawValue: -65536
+    Y:
+      RawValue: 294
+  - X:
+      RawValue: -65345
+    Y:
+      RawValue: -5018
+  - X:
+      RawValue: -62773
+    Y:
+      RawValue: -18837
+  - X:
+      RawValue: -59167
+    Y:
+      RawValue: -28184
+  - X:
+      RawValue: -52316
+    Y:
+      RawValue: -39473
+  - X:
+      RawValue: -37094
+    Y:
+      RawValue: -54029
+  - X:
+      RawValue: -58293
+    Y:
+      RawValue: -29950
+  - X:
+      RawValue: -43568
+    Y:
+      RawValue: -48958
+  - X:
+      RawValue: -39193
+    Y:
+      RawValue: -52527
+  - X:
+      RawValue: -32147
+    Y:
+      RawValue: -57111
+  - X:
+      RawValue: -10374
+    Y:
+      RawValue: -64711
+  - X:
+      RawValue: -34106
+    Y:
+      RawValue: -55963

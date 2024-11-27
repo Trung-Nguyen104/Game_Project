@@ -12,6 +12,7 @@ public class EnterCodesTask : MonoBehaviour
     public UnityEngine.UI.Button[] numberButtons;
     public UnityEngine.UI.Button clearButton;
     public UnityEngine.UI.Button submitButton;
+    public UnityEngine.UI.Button closeTaskButton;
     public int numberLength = 8;
 
     private string targetNumber;
@@ -19,6 +20,7 @@ public class EnterCodesTask : MonoBehaviour
 
     private void Start()
     {
+        closeTaskButton.onClick.AddListener(() => CloseTask());
         SetupButtons();
         ResetTask();
     }
@@ -84,9 +86,14 @@ public class EnterCodesTask : MonoBehaviour
 
     private void CompleteTask()
     {
-        gameObject.SetActive(false);
         var client = QuantumRunner.Default.NetworkClient;
-        client.OpRaiseEvent((byte)TaskCompletedEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        client.OpRaiseEvent((byte)TaskEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        CloseTask();
+    }
+
+    private void CloseTask()
+    {
         ResetTask();
+        gameObject.SetActive(false);
     }
 }

@@ -31,13 +31,17 @@ namespace Quantum
         {
             _entity = filter.Entity;
             var gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
-            if (gameSession->GameState != GameState.GameStarted)
+            if (gameSession->GameState == GameState.GameStarting)
+            {
+                SetUpItemSpawnPosition(frame, filter);
+                SpawnItemHandler(frame, filter);
+                return;
+            }
+            if (gameSession->GameState == GameState.GameEnding)
             {
                 CleanUpItem(frame, filter);
                 return;
             }
-            SetUpItemSpawnPosition(frame, filter);
-            SpawnItemHandler(frame, filter);
             RespawnItemHandler(frame, filter);
         }
 
@@ -65,14 +69,14 @@ namespace Quantum
                 var itemData = frame.FindAsset(filter.ItemSpawner->Item[i].ItemProfile.ItemData);
                 while (listItem[i].ItemQuantity < itemData.itemQuantity)
                 {
-                    var randomPosition = frame.RNG->Next(0, listItemSpawnPosition.Length);
+                    var randomPosition = frame.Global->RngSession.Next(0, listItemSpawnPosition.Length);
                     if (!listItemSpawnPosition[randomPosition].isSpawned)
                     {
                         var itemEnityRef = frame.Create(listItem[i].ItemProfile.ItemPrototype);
                         var itemInfo = frame.Unsafe.GetPointer<ItemInfo>(itemEnityRef);
                         var itemTransform = frame.Unsafe.GetPointer<Transform2D>(itemEnityRef);
 
-                        itemTransform->Rotation = frame.RNG->Next(-45, 45);
+                        itemTransform->Rotation = frame.Global->RngSession.Next(-(FP)45, (FP)45);
                         itemTransform->Position = listItemSpawnPosition[randomPosition].Position;
                         listItem[i].ItemQuantity += 1;
                         listItemSpawnPosition[randomPosition].isSpawned = true;

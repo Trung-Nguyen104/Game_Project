@@ -5,30 +5,33 @@ namespace Quantum
 
     public class ItemSlotsView : QuantumEntityViewComponent
     {
+        public ItemData ItemData { get; private set; }
+        public PlayerRef PlayerRef { get; private set; }
+        public bool IsFull { get; private set; } = false;
+
         private Image image;
-        public ItemData itemData { get; private set; }
-        public PlayerRef playerRef { get; private set; }
-        public bool isFull { get; private set; } = false;
+        private Color originalColor;
 
         private void Start()
         {
             image = GetComponent<Image>();
+            originalColor = image.color;
         }
 
         public void AddItemSlot(ItemData _item, PlayerRef _playerRef)
         {
-            itemData = _item;
-            playerRef = _playerRef;
+            ItemData = _item;
+            PlayerRef = _playerRef;
             image.color = Color.white;
             image.sprite = _item.icon;
-            isFull = true;
+            IsFull = true;
         }
 
         public void RemoveItemSlot()
         {
-            image.color = Color.white;
+            image.color = originalColor;
             image.sprite = null;
-            isFull = false;
+            IsFull = false;
         }
 
         public void SelectItem()

@@ -16,16 +16,16 @@ MonoBehaviour:
     Path: QuantumUser/Resources/ItemData/FirstAid
     Guid:
       Value: 331117412308098189
-  itemType: 2
+  itemType: 3
   itemName: FirstAid
   icon: {fileID: 21300000, guid: 0ff62d5e6eb96694e960b4208ec9b05f, type: 3}
   damge:
     RawValue: 0
-  ammo:
+  maxAmmo:
     RawValue: 0
   heal:
     RawValue: 1966080
   itemQuantity:
     RawValue: 262144
   respawnTime:
-    RawValue: 983040
+    RawValue: 1638400

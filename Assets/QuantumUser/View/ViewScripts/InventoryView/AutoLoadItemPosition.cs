@@ -1,8 +1,5 @@
 namespace Quantum
 {
-    using Photon.Deterministic;
-    using UnityEngine;
-
     public unsafe class AutoLoadItemPosition : QuantumEntityViewComponent
     {
         int index;
@@ -12,12 +9,12 @@ namespace Quantum
         }
         private void Update()
         {
-            if(_entityView == null)
+            if (_entityView == null)
             {
                 return;
             }
             var itemSpawner = VerifiedFrame.Get<ItemSpawner>(_entityView.EntityRef);
-            if(index < itemSpawner.Positions.Length)
+            if (index < itemSpawner.Positions.Length)
             {
                 var itemSpawnPosition = VerifiedFrame.FindAsset(itemSpawner.ItemSpawnPosition);
                 itemSpawnPosition.positions = new();
