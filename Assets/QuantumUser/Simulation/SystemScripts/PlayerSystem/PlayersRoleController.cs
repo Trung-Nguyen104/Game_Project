@@ -1,19 +1,11 @@
 namespace Quantum
 {
-    using Quantum.Collections;
-    using UnityEngine;
+    using Photon.Deterministic;
     using UnityEngine.Scripting;
 
     [Preserve]
     public unsafe class PlayersRoleController : SystemMainThreadFilter<PlayersRoleController.Filter>
     {
-        private QList<EntityRef> listPlayerEntityRef;
-        private PlayerInfo* playerInfo;
-        private Transform2D* playerTransform;
-        private GameSession* gameSession;
-        private bool allPlayerHaveRole = false;
-        private bool resetAllRole = false;
-
         public struct Filter
         {
             public EntityRef Entity;
@@ -22,7 +14,16 @@ namespace Quantum
 
         public override void Update(Frame frame, ref Filter filter)
         {
-            gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
+            var gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
+            filter.RoleManager->RNGValue = new RNGSession(frame.RuntimeConfig.Seed);
+
+            HandleGameSession(frame, filter, gameSession);
+        }
+
+        private void HandleGameSession(Frame frame, Filter filter, GameSession* gameSession)
+        {
+            var roleProfiles = filter.RoleManager->RoleProfiles;
+
             if (gameSession->GameState == GameState.Waiting)
             {
                 return;
@@ -30,63 +31,58 @@ namespace Quantum
             if (gameSession->GameState == GameState.GameEnding)
             {
                 ResetPlayersRole(frame, filter);
-                return;
             }
-            SetUpPlayersRole(frame, filter);
+            if (gameSession->GameState == GameState.GameStarting)
+            {
+                SetUpPlayersRole(frame, filter);
+            }
         }
 
         private void SetUpPlayersRole(Frame frame, Filter filter)
         {
-            if (allPlayerHaveRole)
-            {
-                return;
-            }
-            listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRefList);
+            var listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRefList);
+            var roleProfiles = filter.RoleManager->RoleProfiles;
             for (int i = 0; i < listPlayerEntityRef.Count; i++)
             {
-                playerInfo = frame.Unsafe.GetPointer<PlayerInfo>(listPlayerEntityRef[i]);
+                var playerInfo = frame.Unsafe.GetPointer<PlayerInfo>(listPlayerEntityRef[i]);
                 var playerData = frame.GetPlayerData(playerInfo->PlayerRef);
-                HandleRandomRole(frame, filter, playerData);
+                HandleRandomRole(frame, filter, playerData, roleProfiles);
             }
-            allPlayerHaveRole = true;
-            resetAllRole = false;
         }
 
-        private void HandleRandomRole(Frame frame, Filter filter, RuntimePlayer playerData)
+        private void HandleRandomRole(Frame frame, Filter filter, RuntimePlayer playerData, FixedArray<RoleProfile> roleProfiles)
         {
             while (playerData.PlayerRole == PlayerRole.None)
             {
-                var roleProfiles = filter.RoleManager->RoleProfiles;
-                var randomRole = frame.Global->RngSession.Next(0, roleProfiles.Length);
-                if (roleProfiles[randomRole].RoleQuantity > 0 && roleProfiles[randomRole].PlayerRole != PlayerRole.None)
+                var randomRole = filter.RoleManager->RNGValue.Next(0, roleProfiles.Length);
+                if (!roleProfiles[randomRole].IsDone)
                 {
                     playerData.PlayerRole = roleProfiles[randomRole].PlayerRole;
-                    Debug.Log($"Role {playerInfo->PlayerRef} = {playerData.PlayerRole}");
-                    roleProfiles[randomRole].RoleQuantity--;
+                }
+            }
+            for (int i = 0; i < filter.RoleManager->RoleProfiles.Length; i++)
+            {
+                if (roleProfiles[i].PlayerRole == playerData.PlayerRole)
+                {
+                    roleProfiles[i].IsDone = true;
                 }
             }
         }
 
         private void ResetPlayersRole(Frame frame, Filter filter)
         {
-            if (resetAllRole)
-            {
-                return;
-            }
-            listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRefList);
+            var listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRefList);
             for (int i = 0; i < listPlayerEntityRef.Count; i++)
             {
-                playerInfo = frame.Unsafe.GetPointer<PlayerInfo>(listPlayerEntityRef[i]);
+                var playerInfo = frame.Unsafe.GetPointer<PlayerInfo>(listPlayerEntityRef[i]);
                 var playerData = frame.GetPlayerData(playerInfo->PlayerRef);
                 playerData.PlayerRole = PlayerRole.None;
             }
             var roleProfiles = filter.RoleManager->RoleProfiles;
             for (int i = 0; i < roleProfiles.Length; i++)
             {
-                roleProfiles[i].RoleQuantity = 1;
+                roleProfiles[i].IsDone = false;
             }
-            allPlayerHaveRole = false;
-            resetAllRole = true;
         }
     }
 }

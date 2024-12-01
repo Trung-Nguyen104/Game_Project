@@ -161,6 +161,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.ItemSpawner))]
   public unsafe partial class ItemSpawnerPrototype : ComponentPrototype<Quantum.ItemSpawner> {
     public AssetRef<ItemSpawnPosition> ItemSpawnPosition;
+    public RNGSession RNGValue;
     [ArrayLengthAttribute(30)]
     public Quantum.Prototypes.PositionsPrototype[] Positions = new Quantum.Prototypes.PositionsPrototype[30];
     [ArrayLengthAttribute(4)]
@@ -173,6 +174,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.ItemSpawner result, in PrototypeMaterializationContext context = default) {
         result.ItemSpawnPosition = this.ItemSpawnPosition;
+        result.RNGValue = this.RNGValue;
         for (int i = 0, count = PrototypeValidator.CheckLength(Positions, 30, in context); i < count; ++i) {
           this.Positions[i].Materialize(frame, ref *result.Positions.GetPointer(i), in context);
         }
@@ -229,6 +231,7 @@ namespace Quantum.Prototypes {
   [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.PlayerRoleManager))]
   public unsafe partial class PlayerRoleManagerPrototype : ComponentPrototype<Quantum.PlayerRoleManager> {
+    public RNGSession RNGValue;
     [ArrayLengthAttribute(8)]
     public Quantum.Prototypes.RoleProfilePrototype[] RoleProfiles = new Quantum.Prototypes.RoleProfilePrototype[8];
     partial void MaterializeUser(Frame frame, ref Quantum.PlayerRoleManager result, in PrototypeMaterializationContext context);
@@ -238,6 +241,7 @@ namespace Quantum.Prototypes {
         return f.Set(entity, component) == SetResult.ComponentAdded;
     }
     public void Materialize(Frame frame, ref Quantum.PlayerRoleManager result, in PrototypeMaterializationContext context = default) {
+        result.RNGValue = this.RNGValue;
         for (int i = 0, count = PrototypeValidator.CheckLength(RoleProfiles, 8, in context); i < count; ++i) {
           this.RoleProfiles[i].Materialize(frame, ref *result.RoleProfiles.GetPointer(i), in context);
         }
@@ -260,11 +264,11 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.RoleProfile))]
   public unsafe partial class RoleProfilePrototype : StructPrototype {
     public Quantum.QEnum32<PlayerRole> PlayerRole;
-    public Int32 RoleQuantity;
+    public QBoolean IsDone;
     partial void MaterializeUser(Frame frame, ref Quantum.RoleProfile result, in PrototypeMaterializationContext context);
     public void Materialize(Frame frame, ref Quantum.RoleProfile result, in PrototypeMaterializationContext context = default) {
         result.PlayerRole = this.PlayerRole;
-        result.RoleQuantity = this.RoleQuantity;
+        result.IsDone = this.IsDone;
         MaterializeUser(frame, ref result, in context);
     }
   }

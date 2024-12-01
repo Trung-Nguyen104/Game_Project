@@ -9,7 +9,7 @@ namespace Quantum
         private GameSession gameSession;
         private ItemSlotsView[] itemSlots;
 
-        private int lastSelectItem;
+        private int lastSelectItem = -1;
 
         private void Start()
         {
@@ -65,18 +65,6 @@ namespace Quantum
         {
             if (e.PlayerRef == playerInfo.PlayerRef)
             {
-                if (playerInfo.Inventory[e.SelectItem].Item.ItemData == null)
-                {
-                    for (int i = 0; i < playerInfo.Inventory.Length; i++)
-                    {
-                        ItemSetActive(GetItemData(i), false);
-                    }
-                    if (CheckPlayerLocal())
-                    {
-                        itemSlots[lastSelectItem].DeselectItem();
-                    }
-                    return;
-                }
                 ItemSetActive(GetItemData(e.SelectItem), true);
                 for(int i = 0 ; i < playerInfo.Inventory.Length ; i++)
                 {
@@ -87,7 +75,10 @@ namespace Quantum
                 }
                 if (CheckPlayerLocal() && itemSlots[e.SelectItem].IsFull)
                 {
-                    itemSlots[lastSelectItem].DeselectItem();
+                    if (lastSelectItem >= 0)
+                    {
+                        itemSlots[lastSelectItem].DeselectItem();
+                    }
                     itemSlots[e.SelectItem].SelectItem();
                     lastSelectItem = e.SelectItem;
                 }

@@ -28,15 +28,13 @@ namespace Quantum
             playerData = VerifiedFrame.GetPlayerData(playerInfo.PlayerRef);
             transform2D = VerifiedFrame.Get<Transform2D>(_entityView.EntityRef);
             RotationController();
-            Debug.Log("FacingLeft = " + FacingLeft);
         }
 
         private void RotationController()
         {
-            if (playerInfo.Inventory[playerInfo.CurrSelectItem].Item.ItemPrototype != null)
+            if (playerInfo.CurrSelectItem >= 0 && VerifiedFrame.TryFindAsset(playerInfo.Inventory[playerInfo.CurrSelectItem].Item.ItemData, out var itemData))
             {
-                var itemType = VerifiedFrame.FindAsset(playerInfo.Inventory[playerInfo.CurrSelectItem].Item.ItemData).itemType;
-                if (itemType == ItemType.Weapon)
+                if (itemData.itemType == ItemType.Weapon)
                 {
                     var mouseXPosition = VerifiedFrame.GetPlayerInput(playerInfo.PlayerRef)->MousePosition.X;
                     RotationWithMousePosition(mouseXPosition);
@@ -57,11 +55,13 @@ namespace Quantum
             {
                 if (playerData.IsMonsterKill)
                 {
-                    animator.SetBool("isMonsterKilled", playerData.IsMonsterKill);
+                    Debug.Log("Player Was Killed By Monster");
+                    animator.SetBool("isMonsterKilled", true);
                 }
                 else
                 {
-                    animator.SetBool("isGunKilled", !playerData.IsMonsterKill);
+                    Debug.Log("Player Was Died By Gun");
+                    animator.SetBool("isGunKilled", true);
                 }
             }
             else

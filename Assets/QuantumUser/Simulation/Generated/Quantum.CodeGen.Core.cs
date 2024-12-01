@@ -570,30 +570,28 @@ namespace Quantum {
   public unsafe partial struct RoleProfile {
     public const Int32 SIZE = 8;
     public const Int32 ALIGNMENT = 4;
-    [FieldOffset(4)]
-    public PlayerRole PlayerRole;
     [FieldOffset(0)]
-    public Int32 RoleQuantity;
+    public PlayerRole PlayerRole;
+    [FieldOffset(4)]
+    public QBoolean IsDone;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 11261;
         hash = hash * 31 + (Int32)PlayerRole;
-        hash = hash * 31 + RoleQuantity.GetHashCode();
+        hash = hash * 31 + IsDone.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (RoleProfile*)ptr;
-        serializer.Stream.Serialize(&p->RoleQuantity);
         serializer.Stream.Serialize((Int32*)&p->PlayerRole);
+        QBoolean.Serialize(&p->IsDone, serializer);
     }
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct _globals_ {
     public const Int32 SIZE = 1592;
     public const Int32 ALIGNMENT = 8;
-    [FieldOffset(1588)]
-    private fixed Byte _alignment_padding_[4];
     [FieldOffset(0)]
     public AssetRef<Map> Map;
     [FieldOffset(8)]
@@ -619,8 +617,10 @@ namespace Quantum {
     private fixed Byte _input_[1024];
     [FieldOffset(1576)]
     public BitSet8 PlayerLastConnectionState;
-    [FieldOffset(1584)]
+    [FieldOffset(1588)]
     public QListPtr<EntityRef> playerEntityRefList;
+    [FieldOffset(1584)]
+    public QListPtr<EntityRef> listItemEntityRef;
     public FixedArray<Input> input {
       get {
         fixed (byte* p = _input_) { return new FixedArray<Input>(p, 128, 8); }
@@ -642,11 +642,13 @@ namespace Quantum {
         hash = hash * 31 + HashCodeUtils.GetArrayHashCode(input);
         hash = hash * 31 + PlayerLastConnectionState.GetHashCode();
         hash = hash * 31 + playerEntityRefList.GetHashCode();
+        hash = hash * 31 + listItemEntityRef.GetHashCode();
         return hash;
       }
     }
     partial void ClearPointersPartial(FrameBase f, EntityRef entity) {
       playerEntityRefList = default;
+      listItemEntityRef = default;
     }
     static partial void SerializeCodeGen(void* ptr, FrameSerializer serializer) {
         var p = (_globals_*)ptr;
@@ -662,6 +664,7 @@ namespace Quantum {
         serializer.Stream.Serialize(&p->PlayerConnectedCount);
         FixedArray.Serialize(p->input, serializer, Statics.SerializeInput);
         Quantum.BitSet8.Serialize(&p->PlayerLastConnectionState, serializer);
+        QList.Serialize(&p->listItemEntityRef, serializer, Statics.SerializeEntityRef);
         QList.Serialize(&p->playerEntityRefList, serializer, Statics.SerializeEntityRef);
     }
   }
@@ -742,14 +745,16 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct ItemSpawner : Quantum.IComponent {
-    public const Int32 SIZE = 824;
+    public const Int32 SIZE = 840;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(0)]
     public AssetRef<ItemSpawnPosition> ItemSpawnPosition;
-    [FieldOffset(104)]
+    [FieldOffset(8)]
+    public RNGSession RNGValue;
+    [FieldOffset(120)]
     [FramePrinter.FixedArrayAttribute(typeof(Positions), 30)]
     private fixed Byte _Positions_[720];
-    [FieldOffset(8)]
+    [FieldOffset(24)]
     [FramePrinter.FixedArrayAttribute(typeof(ItemSpawn), 4)]
     private fixed Byte _Item_[96];
     public FixedArray<Positions> Positions {
@@ -766,6 +771,7 @@ namespace Quantum {
       unchecked { 
         var hash = 20183;
         hash = hash * 31 + ItemSpawnPosition.GetHashCode();
+        hash = hash * 31 + RNGValue.GetHashCode();
         hash = hash * 31 + HashCodeUtils.GetArrayHashCode(Positions);
         hash = hash * 31 + HashCodeUtils.GetArrayHashCode(Item);
         return hash;
@@ -774,6 +780,7 @@ namespace Quantum {
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (ItemSpawner*)ptr;
         AssetRef.Serialize(&p->ItemSpawnPosition, serializer);
+        RNGSession.Serialize(&p->RNGValue, serializer);
         FixedArray.Serialize(p->Item, serializer, Statics.SerializeItemSpawn);
         FixedArray.Serialize(p->Positions, serializer, Statics.SerializePositions);
     }
@@ -842,9 +849,11 @@ namespace Quantum {
     }
   }
   [StructLayout(LayoutKind.Explicit)]
-  public unsafe partial struct PlayerRoleManager : Quantum.IComponent {
-    public const Int32 SIZE = 64;
-    public const Int32 ALIGNMENT = 4;
+  public unsafe partial struct PlayerRoleManager : Quantum.IComponentSingleton {
+    public const Int32 SIZE = 80;
+    public const Int32 ALIGNMENT = 8;
+    [FieldOffset(64)]
+    public RNGSession RNGValue;
     [FieldOffset(0)]
     [FramePrinter.FixedArrayAttribute(typeof(RoleProfile), 8)]
     private fixed Byte _RoleProfiles_[64];
@@ -856,6 +865,7 @@ namespace Quantum {
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 2447;
+        hash = hash * 31 + RNGValue.GetHashCode();
         hash = hash * 31 + HashCodeUtils.GetArrayHashCode(RoleProfiles);
         return hash;
       }
@@ -863,6 +873,7 @@ namespace Quantum {
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (PlayerRoleManager*)ptr;
         FixedArray.Serialize(p->RoleProfiles, serializer, Statics.SerializeRoleProfile);
+        RNGSession.Serialize(&p->RNGValue, serializer);
     }
   }
   [StructLayout(LayoutKind.Explicit)]
@@ -902,6 +913,9 @@ namespace Quantum {
   public unsafe partial interface ISignalOnDoctorInject : ISignal {
     void OnDoctorInject(Frame f, EntityRef TargetRef);
   }
+  public unsafe partial interface ISignalOnGameStart : ISignal {
+    void OnGameStart(Frame f);
+  }
   public static unsafe partial class Constants {
     public const Int32 PLAYER_COUNT = 8;
   }
@@ -911,6 +925,7 @@ namespace Quantum {
     private ISignalOnLoadPosition[] _ISignalOnLoadPositionSystems;
     private ISignalOnMonsterKill[] _ISignalOnMonsterKillSystems;
     private ISignalOnDoctorInject[] _ISignalOnDoctorInjectSystems;
+    private ISignalOnGameStart[] _ISignalOnGameStartSystems;
     partial void AllocGen() {
       _globals = (_globals_*)Context.Allocator.AllocAndClear(sizeof(_globals_));
     }
@@ -927,6 +942,7 @@ namespace Quantum {
       _ISignalOnLoadPositionSystems = BuildSignalsArray<ISignalOnLoadPosition>();
       _ISignalOnMonsterKillSystems = BuildSignalsArray<ISignalOnMonsterKill>();
       _ISignalOnDoctorInjectSystems = BuildSignalsArray<ISignalOnDoctorInject>();
+      _ISignalOnGameStartSystems = BuildSignalsArray<ISignalOnGameStart>();
       _ComponentSignalsOnAdded = new ComponentReactiveCallbackInvoker[ComponentTypeId.Type.Length];
       _ComponentSignalsOnRemoved = new ComponentReactiveCallbackInvoker[ComponentTypeId.Type.Length];
       BuildSignalsArrayOnComponentAdded<Quantum.BulletInfo>();
@@ -1057,6 +1073,15 @@ namespace Quantum {
           }
         }
       }
+      public void OnGameStart() {
+        var array = _f._ISignalOnGameStartSystems;
+        for (Int32 i = 0; i < array.Length; ++i) {
+          var s = array[i];
+          if (_f.SystemIsEnabledInHierarchy((SystemBase)s)) {
+            s.OnGameStart(_f);
+          }
+        }
+      }
     }
   }
   public unsafe partial class Statics {
@@ -1177,7 +1202,7 @@ namespace Quantum {
         .Add<Quantum.ItemSpawner>(Quantum.ItemSpawner.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.MousePointerInfo>(Quantum.MousePointerInfo.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.PlayerInfo>(Quantum.PlayerInfo.Serialize, null, null, ComponentFlags.None)
-        .Add<Quantum.PlayerRoleManager>(Quantum.PlayerRoleManager.Serialize, null, null, ComponentFlags.None)
+        .Add<Quantum.PlayerRoleManager>(Quantum.PlayerRoleManager.Serialize, null, null, ComponentFlags.Singleton)
         .Add<Quantum.TaskInfo>(Quantum.TaskInfo.Serialize, null, null, ComponentFlags.None)
         .Finish();
     }

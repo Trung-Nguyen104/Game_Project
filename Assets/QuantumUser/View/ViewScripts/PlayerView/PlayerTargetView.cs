@@ -177,6 +177,7 @@ public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
     {
         client.OpRaiseEvent(roleEventCode, targetRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
     }
+
     private EntityRef GetTargetRef(EventData photonEvent)
     {
         EntityRef targetRef = default;
@@ -186,6 +187,7 @@ public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
         }
         return targetRef;
     }
+
     private bool CheckLocalPlayer() => QuantumRunner.DefaultGame.PlayerIsLocal(PlayerRef);
     private bool CheckUseSkillInput() => UnityEngine.Input.GetKeyDown(KeyCode.R);
     private bool SkillDistance(PlayerTargetView playerTarget, float availableDist) => Vector2.Distance(playerTarget.playerTransform.position, playerTransform.position) > availableDist;

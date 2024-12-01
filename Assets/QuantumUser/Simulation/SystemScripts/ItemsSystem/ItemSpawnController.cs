@@ -1,19 +1,15 @@
 namespace Quantum
 {
     using Photon.Deterministic;
-    using System.Collections.Generic;
     using UnityEngine.Scripting;
-    using UnityEngine;
 
     [Preserve]
     public unsafe class ItemSpawnController : SystemMainThreadFilter<ItemSpawnController.Filter>, ISignalOnPickUpItem, ISignalOnUseItem
     {
-        private List<EntityRef> listItemEntityRef;
         private EntityRef _entity;
         private FP timeCounter;
         private int index;
         private bool canCounter = false;
-        private bool loadAllPosition = false;
 
         public struct Filter
         {
@@ -24,17 +20,27 @@ namespace Quantum
         public override void OnInit(Frame frame)
         {
             base.OnInit(frame);
-            listItemEntityRef = new();
+            frame.Global->listItemEntityRef = frame.AllocateList<EntityRef>();
         }
 
         public override void Update(Frame frame, ref Filter filter)
         {
             _entity = filter.Entity;
             var gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
+            filter.ItemSpawner->RNGValue = new RNGSession(frame.RuntimeConfig.Seed);
+
+            HandleGameSession(frame, filter, gameSession);
+        }
+
+        private void HandleGameSession(Frame frame, Filter filter, GameSession* gameSession)
+        {
+            if (gameSession->GameState == GameState.Waiting)
+            {
+                return;
+            }
             if (gameSession->GameState == GameState.GameStarting)
             {
                 SetUpItemSpawnPosition(frame, filter);
-                SpawnItemHandler(frame, filter);
                 return;
             }
             if (gameSession->GameState == GameState.GameEnding)
@@ -42,25 +48,22 @@ namespace Quantum
                 CleanUpItem(frame, filter);
                 return;
             }
+            SpawnItemHandler(frame, filter);
             RespawnItemHandler(frame, filter);
         }
 
         private void SetUpItemSpawnPosition(Frame frame, Filter filter)
         {
-            if (loadAllPosition)
-            {
-                return;
-            }
             var itemSpawnPosition = frame.FindAsset(filter.ItemSpawner->ItemSpawnPosition);
             for (int i = 0; i < itemSpawnPosition.positions.Count; i++)
             {
                 filter.ItemSpawner->Positions[i].Position = itemSpawnPosition.positions[i];
             }
-            loadAllPosition = true;
         }
 
         private void SpawnItemHandler(Frame frame, Filter filter)
         {
+            var listItemEntityRef = frame.ResolveList(frame.Global->listItemEntityRef);
             var listItemSpawnPosition = filter.ItemSpawner->Positions;
             var listItem = filter.ItemSpawner->Item;
 
@@ -69,14 +72,14 @@ namespace Quantum
                 var itemData = frame.FindAsset(filter.ItemSpawner->Item[i].ItemProfile.ItemData);
                 while (listItem[i].ItemQuantity < itemData.itemQuantity)
                 {
-                    var randomPosition = frame.Global->RngSession.Next(0, listItemSpawnPosition.Length);
+                    var randomPosition = filter.ItemSpawner->RNGValue.Next(0, listItemSpawnPosition.Length);
                     if (!listItemSpawnPosition[randomPosition].isSpawned)
                     {
                         var itemEnityRef = frame.Create(listItem[i].ItemProfile.ItemPrototype);
                         var itemInfo = frame.Unsafe.GetPointer<ItemInfo>(itemEnityRef);
                         var itemTransform = frame.Unsafe.GetPointer<Transform2D>(itemEnityRef);
 
-                        itemTransform->Rotation = frame.Global->RngSession.Next(-(FP)45, (FP)45);
+                        itemTransform->Rotation = filter.ItemSpawner->RNGValue.Next(-(FP)45, (FP)45);
                         itemTransform->Position = listItemSpawnPosition[randomPosition].Position;
                         listItem[i].ItemQuantity += 1;
                         listItemSpawnPosition[randomPosition].isSpawned = true;
@@ -88,6 +91,7 @@ namespace Quantum
 
         private void CleanUpItem(Frame frame, Filter filter)
         {
+            var listItemEntityRef = frame.ResolveList(frame.Global->listItemEntityRef);
             for (int i = 0; i < filter.ItemSpawner->Item.Length; i++)
             {
                 filter.ItemSpawner->Item[i].ItemQuantity = 0;

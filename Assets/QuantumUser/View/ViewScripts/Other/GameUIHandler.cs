@@ -1,28 +1,21 @@
-using Photon.Client;
 using Photon.Deterministic;
 using Photon.Realtime;
 using Quantum;
 using System;
-using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
 
-enum GameSessionCode : byte
-{
-    GameStart = 0,
-    GameEnd = 1,
-}
-
-public class GameUIHandler : QuantumEntityViewComponent, IOnEventCallback
+public class GameUIHandler : QuantumMonoBehaviour
 {
     public UnityEngine.UI.Button startGameButton;
     public UnityEngine.UI.Button endGameButton;
 
     private RealtimeClient client;
-    private unsafe GameSession* gameSession;
+    private Frame frame;
 
     private void Start()
     {
+        frame = QuantumRunner.DefaultGame.Frames.Verified;
         client = QuantumRunner.Default?.NetworkClient;
         client.AddCallbackTarget(this);
         startGameButton.onClick.AddListener(() => StartGamePressed());
@@ -30,17 +23,17 @@ public class GameUIHandler : QuantumEntityViewComponent, IOnEventCallback
         Debug.Log($"Client {client.State} {client.CurrentRoom.Name}");
     }
 
-    private unsafe void Update()
+    private void Update()
     {
-        VerifiedFrame.Unsafe.TryGetPointerSingleton(out gameSession);
+        frame.TryGetSingleton<GameSession>(out var gameSession);
 
-        StartGameButton();
-        EndGameButton();
+        StartGameButton(gameSession);
+        EndGameButton(gameSession);
     }
 
-    private unsafe void StartGameButton()
+    private void StartGameButton(GameSession gameSession)
     {
-        if (!client.LocalPlayer.IsMasterClient || gameSession->GameState != GameState.Waiting)
+        if (!client.LocalPlayer.IsMasterClient || gameSession.GameState != GameState.Waiting)
         {
             startGameButton.gameObject.SetActive(false);
         }
@@ -50,9 +43,9 @@ public class GameUIHandler : QuantumEntityViewComponent, IOnEventCallback
         }
     }
 
-    private unsafe void EndGameButton()
+    private void EndGameButton(GameSession gameSession)
     {
-        if (!client.LocalPlayer.IsMasterClient || gameSession->GameState != GameState.GameStarted)
+        if (!client.LocalPlayer.IsMasterClient || gameSession.GameState != GameState.GameStarted)
         {
             endGameButton.gameObject.SetActive(false);
         }
@@ -62,53 +55,34 @@ public class GameUIHandler : QuantumEntityViewComponent, IOnEventCallback
         }
     }
 
-    public void StartGamePressed()
+    private async void StartGamePressed()
     {
-        MasterClientRaiseEvent((byte)GameSessionCode.GameStart);
+        await WaitFor(1, StartingGame);
+        await WaitFor(2, StartedGame);
     }
 
-    public void EndGamePressed()
+    private async void EndGamePressed()
     {
-        MasterClientRaiseEvent((byte)GameSessionCode.GameEnd);
+        await WaitFor(1, EndingGame);
+        await WaitFor(2, BackToWaitingState);
+        QuantumRunner.DefaultGame.SendCommand(new ChangeSeedCommads() { NewSeed = UnityEngine.Random.Range(-1000, 1000) });
     }
 
-    private void MasterClientRaiseEvent(byte gameSessionCode)
+    private void StartingGame() => QuantumRunner.DefaultGame.SendCommand(new ChangeGameStateCommads() { NewGameState = GameState.GameStarting.ToString() });
+
+    private void StartedGame() => QuantumRunner.DefaultGame.SendCommand(new ChangeGameStateCommads() { NewGameState = GameState.GameStarted.ToString() });
+
+    private void EndingGame() => QuantumRunner.DefaultGame.SendCommand(new ChangeGameStateCommads() { NewGameState = GameState.GameEnding.ToString() });
+
+    private void BackToWaitingState() => QuantumRunner.DefaultGame.SendCommand(new ChangeGameStateCommads() { NewGameState = GameState.Waiting.ToString() });
+
+    private async Task WaitFor(FP timeDelay, Action callBack)
     {
-        if (!client.OpRaiseEvent(gameSessionCode, null, new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable))
-        {
-            Debug.Log("RaiseEvent Failed");
-            return;
-        }
-    }
-
-    public async void OnEvent(EventData photonEvent)
-    {
-        switch (photonEvent.Code)
-        {
-            case (byte)GameSessionCode.GameStart:
-                await WaitFor(1, StartingGame);
-                await WaitFor(2, StartGame);
-                break;
-            case (byte)GameSessionCode.GameEnd:
-                await WaitFor(1, EndingGame);
-                await WaitFor(2, BackToWaitingState);
-                break;
-        }
-    }
-
-    private unsafe void StartingGame() => gameSession->GameState = GameState.GameStarting;
-    private unsafe void StartGame() => gameSession->GameState = GameState.GameStarted;
-    private unsafe void EndingGame() => gameSession->GameState = GameState.GameEnding;
-    private unsafe void BackToWaitingState() => gameSession->GameState = GameState.Waiting;
-
-    public async Task WaitFor(FP delayInSeconds, Action callback)
-    {
-        var targetTick = VerifiedFrame.Number + (int)(delayInSeconds / VerifiedFrame.DeltaTime);
-
-        while (VerifiedFrame.Number < targetTick)
+        var targetTime = frame.Number + (int)(timeDelay / frame.DeltaTime);
+        while (frame.Number < targetTime)
         {
             await Task.Yield();
         }
-        callback.Invoke();
+        callBack.Invoke();
     }
 }

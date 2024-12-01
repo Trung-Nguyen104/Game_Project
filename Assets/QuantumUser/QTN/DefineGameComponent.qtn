@@ -18,6 +18,7 @@ input
 global
 {
 	list<entity_ref> playerEntityRefList;
+	list<entity_ref> listItemEntityRef;
 }
 
 component PlayerInfo
@@ -48,6 +49,7 @@ component ItemInfo
 component ItemSpawner
 {
 	AssetRef<ItemSpawnPosition> ItemSpawnPosition;
+	RNGSession RNGValue;
 	array<Positions>[30] Positions;
 	array<ItemSpawn>[4] Item;
 }
@@ -60,8 +62,9 @@ component BulletInfo
 	bool IsFirstTouching;
 }
 
-component PlayerRoleManager
+singleton component PlayerRoleManager
 {
+	RNGSession RNGValue;
 	array<RoleProfile>[8] RoleProfiles;
 }
 
@@ -97,7 +100,7 @@ struct ItemProfile
 struct RoleProfile
 {
 	PlayerRole PlayerRole;
-	Int32 RoleQuantity;
+	bool IsDone;
 }
 
 enum PlayerRole
@@ -191,3 +194,4 @@ signal OnUseItem (ItemInfo ItemInfo);
 signal OnLoadPosition (FPVector2 Position);
 signal OnMonsterKill (entity_ref TargetRef);
 signal OnDoctorInject (entity_ref TargetRef);
+signal OnGameStart ();

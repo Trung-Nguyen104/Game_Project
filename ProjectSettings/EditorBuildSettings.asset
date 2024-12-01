@@ -6,17 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Photon/QuantumMenu/QuantumSampleMenu.unity
-    guid: f23d3edd333e1dc449a4688e04123759
-  - enabled: 0
-    path: Assets/QuantumUser/Scenes/QuantumSimpleConnectionScene.unity
-    guid: c09b348e1750d434e9b433906e64ae96
-  - enabled: 1
-    path: Assets/QuantumUser/Scenes/Menu.unity
-    guid: befefe6be927a0f4580fa74bd8489749
-  - enabled: 1
-    path: Assets/QuantumUser/Scenes/WaitingRoomScene.unity
-    guid: 5fbaf9b1289f389469501ba47b7f39c3
+    path: Assets/QuantumUser/Scenes/GameMenuScene.unity
+    guid: db6fc6a6065a93742943b8adba5012d5
   - enabled: 1
     path: Assets/QuantumUser/Scenes/GameScene.unity
     guid: 3591ad3b5b4f3624eb3899099b5e444b

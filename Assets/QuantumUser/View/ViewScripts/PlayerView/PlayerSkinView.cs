@@ -1,13 +1,11 @@
 namespace Quantum
 {
-    using Photon.Realtime;
     using System.Collections.Generic;
-    using UnityEditor.Animations;
     using UnityEngine;
 
     public unsafe class PlayerSkinView : QuantumEntityViewComponent
     {
-        public List<AnimatorController> animController;
+        public List<RuntimeAnimatorController> animController;
         private Animator animator;
 
         private void Start()

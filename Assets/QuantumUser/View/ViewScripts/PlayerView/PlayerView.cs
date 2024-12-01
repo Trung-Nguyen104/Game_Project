@@ -3,7 +3,6 @@ namespace Quantum
     using Photon.Deterministic;
     using UnityEngine;
     using UnityEngine.Rendering.Universal;
-    using UnityEngine.UI;
 
     public unsafe class PlayerView : QuantumEntityViewComponent
     {

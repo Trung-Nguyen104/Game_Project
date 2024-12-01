@@ -13,6 +13,6 @@ namespace Quantum
         public bool IsMonsterKill = false;
         public int MaxHealth { get; set; } = 100;
         public bool HaveRandomSkin { get; set; } = false;
-        public FP PlayerSeed { get; private set; } = 6;
+        public FP PlayerSpeed { get; private set; } = 6;
     }
 }

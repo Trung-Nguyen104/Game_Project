@@ -1,5 +1,7 @@
 namespace Quantum
 {
+    using UnityEditor;
+    using UnityEngine;
     using UnityEngine.Scripting;
 
     [Preserve]
@@ -17,6 +19,10 @@ namespace Quantum
             var input = frame.GetPlayerInput(filter.PlayerInfo->PlayerRef);
             var playerData = frame.GetPlayerData(filter.PlayerInfo->PlayerRef);
             var gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
+            if (gameSession->GameState == GameState.GameStarting)
+            {
+                filter.PlayerInfo->CurrSelectItem = -1;
+            }
             if (playerData.CurrHealth <= 0 || gameSession->GameState == GameState.GameEnding)
             {
                 CleanUpInventory(frame, filter, input, playerData);
@@ -61,13 +67,13 @@ namespace Quantum
         {
             if (input->SelectItem > 0)
             {
-                if (input->SelectItem - 1 == filter.PlayerInfo->CurrSelectItem)
-                {
-                    filter.PlayerInfo->CurrSelectItem = -1;
-                }
                 var inputSelecIndex = input->SelectItem - 1;
+                if (filter.PlayerInfo->Inventory[inputSelecIndex].Item.ItemPrototype == null)
+                {
+                    return;
+                }
                 filter.PlayerInfo->CurrSelectItem = inputSelecIndex;
-                frame.Events.SelectItem(filter.PlayerInfo->PlayerRef, inputSelecIndex);
+                frame.Events.SelectItem(filter.PlayerInfo->PlayerRef, filter.PlayerInfo->CurrSelectItem);
             }
         }
 
@@ -82,6 +88,7 @@ namespace Quantum
                 ClearUpInventorySlot(currSelectItem, playerInventory, filter, currItemData);
                 frame.Events.RemoveItem(filter.PlayerInfo->PlayerRef, filter.PlayerInfo->CurrSelectItem, currItemData);
             }
+            filter.PlayerInfo->CurrSelectItem = -1;
         }
 
         private void SetUpDropItem(Frame frame, Filter filter, ItemInfo currItem, Input* input)

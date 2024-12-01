@@ -127,6 +127,11 @@ MonoBehaviour:
     SystemName: 
     StartDisabled: 0
     Children: []
+  - SystemType:
+      AssemblyQualifiedName: Quantum.PlayerCommadsSystems, Quantum.Simulation
+    SystemName: 
+    StartDisabled: 0
+    Children: []
 --- !u!114 &1969374398273535792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,10 +273,10 @@ MonoBehaviour:
       RawValue: 72090
   AutoLoadSceneFromMap: 2
   DeltaTimeType: 0
-  ThreadCount: 2
+  ThreadCount: 3
   ChecksumSnapshotHistoryLengthSeconds:
     RawValue: 196608
-  ChecksumErrorDumpOptions: 0
+  ChecksumErrorDumpOptions: -1
   HeapTrackingMode: 1
   HeapPageShift: 15
   HeapPageCount: 256

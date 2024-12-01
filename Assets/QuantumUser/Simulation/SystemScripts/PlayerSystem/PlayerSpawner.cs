@@ -24,7 +24,7 @@ namespace Quantum
 
             if (!playerData.HaveRandomSkin)
             {
-                playerData.SkinColor = frame.Global->RngSession.Next(0, 5);
+                playerData.SkinColor = frame.RNG->Next(0, 5);
                 playerData.HaveRandomSkin = true;
             }
 

@@ -65,7 +65,7 @@ namespace Quantum
 
         private void PlayerMovement(Frame frame, Filter filter, RuntimePlayer playerData, Input* input)
         {
-            filter.Physics2D->Velocity = input->Direction * playerData.PlayerSeed;
+            filter.Physics2D->Velocity = input->Direction * playerData.PlayerSpeed;
             if (filter.Physics2D->Velocity.Magnitude > 0)
             {
                 frame.Events.IsMoving(filter.PlayerInfo->PlayerRef, true);

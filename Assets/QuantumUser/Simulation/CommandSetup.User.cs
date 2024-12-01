@@ -9,6 +9,8 @@
         {
             // Add or remove commands to the collection.
             // factories.Add(new NavMeshAgentTestSystem.RunTest());
+            factories.Add(new DeterministicCommandPool<ChangeGameStateCommads>());
+            factories.Add(new ChangeSeedCommads());
         }
     }
 }

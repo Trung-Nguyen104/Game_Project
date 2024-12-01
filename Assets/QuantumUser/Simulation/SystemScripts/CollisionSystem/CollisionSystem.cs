@@ -17,10 +17,12 @@ namespace Quantum
                 {
                     if (!frame.TryFindAsset(itemInfo.Item.ItemData, out var itemData))
                     {
+                        Debug.Log("Can Find ItemData");
                         return;
                     }
                     if (itemData.itemType != ItemType.Ammo)
                     {
+                        Debug.Log("Can Pick Up");
                         if (input->PickUpOrProcessTask.IsDown)
                         {
                             PickUpItem(frame, info, playerInfo, itemInfo, itemData);
@@ -50,13 +52,12 @@ namespace Quantum
             if (frame.Unsafe.TryGetPointer<PlayerInfo>(info.Other, out var playerInfo))
             {
                 TaskTrigger(frame, info, playerInfo);
-                
             }
         }
 
         private void GunAmmoItem(Frame frame, CollisionInfo2D info, PlayerInfo* playerInfo, ItemInfo itemInfo)
         {
-            if (!frame.TryFindAsset(playerInfo->Inventory[playerInfo->CurrSelectItem].Item.ItemData, out var currItemData))
+            if (playerInfo->CurrSelectItem < 0 || !frame.TryFindAsset(playerInfo->Inventory[playerInfo->CurrSelectItem].Item.ItemData, out var currItemData))
             {
                 return;
             }
