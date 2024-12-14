@@ -249,6 +249,31 @@ namespace Quantum.Prototypes {
     }
   }
   [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(Quantum.PlayerSpawnPosition))]
+  public unsafe partial class PlayerSpawnPositionPrototype : ComponentPrototype<Quantum.PlayerSpawnPosition> {
+    public AssetRef<PlayerSpawnPositions> PlayerSpawnPositions;
+    [ArrayLengthAttribute(8)]
+    public Quantum.Prototypes.PositionsPrototype[] WaitingPosition = new Quantum.Prototypes.PositionsPrototype[8];
+    [ArrayLengthAttribute(8)]
+    public Quantum.Prototypes.PositionsPrototype[] InGamePosition = new Quantum.Prototypes.PositionsPrototype[8];
+    partial void MaterializeUser(Frame frame, ref Quantum.PlayerSpawnPosition result, in PrototypeMaterializationContext context);
+    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
+        Quantum.PlayerSpawnPosition component = default;
+        Materialize((Frame)f, ref component, in context);
+        return f.Set(entity, component) == SetResult.ComponentAdded;
+    }
+    public void Materialize(Frame frame, ref Quantum.PlayerSpawnPosition result, in PrototypeMaterializationContext context = default) {
+        result.PlayerSpawnPositions = this.PlayerSpawnPositions;
+        for (int i = 0, count = PrototypeValidator.CheckLength(WaitingPosition, 8, in context); i < count; ++i) {
+          this.WaitingPosition[i].Materialize(frame, ref *result.WaitingPosition.GetPointer(i), in context);
+        }
+        for (int i = 0, count = PrototypeValidator.CheckLength(InGamePosition, 8, in context); i < count; ++i) {
+          this.InGamePosition[i].Materialize(frame, ref *result.InGamePosition.GetPointer(i), in context);
+        }
+        MaterializeUser(frame, ref result, in context);
+    }
+  }
+  [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.Positions))]
   public unsafe partial class PositionsPrototype : StructPrototype {
     public FPVector2 Position;

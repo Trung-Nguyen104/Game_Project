@@ -25,10 +25,43 @@ namespace Quantum
         {
             playerInfo = VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef);
             playerData = VerifiedFrame.GetPlayerData(playerInfo.PlayerRef);
-
+            
             SetActivePlayerMiniMapIcon();
+            HandlePlayerHealthBar();
             CheckOwnerLight();
             CameraHandler();
+        }
+
+        private void HandlePlayerHitBullet(EventIsPlayerHitBullet e)
+        {
+            if (playerInfo.PlayerRef != e.PlayerRef)
+            {
+                return;
+            }
+            playerData.CurrHealth -= e.Damage;
+        }
+
+        private void HandlePlayerHealthBar()
+        {
+            if (!CheckLocalPlayer())
+            {
+                return;
+            }
+
+            var gameSession = VerifiedFrame.GetSingleton<GameSession>();
+            var healthBar = PlayerUIController.Instance.PlayerHealthBar;
+            healthBar.SetMaxValueHealth(playerData.MaxHealth);
+
+            if (gameSession.GameState != GameState.GameStarted || playerData.CurrHealth <= 0)
+            {
+                healthBar.EnableHealthBar(false);
+                return;
+            }
+
+            healthBar.EnableHealthBar(true);
+            healthBar.DisplayCurrHealth(playerData.CurrHealth.AsInt);
+
+            
         }
 
         private void SetActivePlayerMiniMapIcon()
@@ -41,21 +74,6 @@ namespace Quantum
             {
                 miniMapIcon.SetActive(true);
             }
-        }
-
-        private bool CheckLocalPlayer() => QuantumRunner.DefaultGame.PlayerIsLocal(playerInfo.PlayerRef);
-
-        private void HandlePlayerHitBullet(EventIsPlayerHitBullet e)
-        {
-            if (playerInfo.PlayerRef == e.PlayerRef)
-            {
-                VerifiedFrame.GetPlayerData(e.PlayerRef).CurrHealth -= e.Damage;
-            }
-        }
-
-        private void CheckOwnerLight()
-        {
-            spotLight.enabled = CheckLocalPlayer();
         }
 
         private void CameraHandler()
@@ -113,5 +131,10 @@ namespace Quantum
             }
             return selectIndex;
         }
+
+        private void CheckOwnerLight() => spotLight.enabled = CheckLocalPlayer();
+
+        private bool CheckLocalPlayer() => QuantumRunner.DefaultGame.PlayerIsLocal(playerInfo.PlayerRef);
+
     }
 }

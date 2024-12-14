@@ -11,6 +11,7 @@ namespace Quantum
         public PlayerRole PlayerRole = PlayerRole.None;
         public bool IsImmunity = false;
         public bool IsMonsterKill = false;
+        public bool IsSoldierDeaded = false;
         public int MaxHealth { get; set; } = 100;
         public bool HaveRandomSkin { get; set; } = false;
         public FP PlayerSpeed { get; private set; } = 6;

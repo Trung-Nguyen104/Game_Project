@@ -9,11 +9,131 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63ff28b50bfb54143bd2768915ccc63b, type: 3}
+  m_Script: {fileID: 11500000, guid: 97999aa117d49c54483afc25ae6b2d74, type: 3}
   m_Name: ItemSpawnPosition
   m_EditorClassIdentifier: 
   Identifier:
     Path: QuantumUser/Resources/MyAssets/ItemSpawnPosition
     Guid:
       Value: 378436883922357289
-  positions: []
+  positions:
+  - X:
+      RawValue: -2043111
+    Y:
+      RawValue: 1731821
+  - X:
+      RawValue: -195834
+    Y:
+      RawValue: -496893
+  - X:
+      RawValue: -195834
+    Y:
+      RawValue: 358055
+  - X:
+      RawValue: -1062476
+    Y:
+      RawValue: 1338690
+  - X:
+      RawValue: -242601
+    Y:
+      RawValue: 2309095
+  - X:
+      RawValue: 1592983
+    Y:
+      RawValue: 1454145
+  - X:
+      RawValue: 1305077
+    Y:
+      RawValue: 2342709
+  - X:
+      RawValue: 727803
+    Y:
+      RawValue: -565582
+  - X:
+      RawValue: 346364
+    Y:
+      RawValue: 415052
+  - X:
+      RawValue: 2205332
+    Y:
+      RawValue: 381439
+  - X:
+      RawValue: 1847276
+    Y:
+      RawValue: -23383
+  - X:
+      RawValue: -1281694
+    Y:
+      RawValue: -381439
+  - X:
+      RawValue: 1373765
+    Y:
+      RawValue: -1755204
+  - X:
+      RawValue: 1870659
+    Y:
+      RawValue: -1777126
+  - X:
+      RawValue: 4733645
+    Y:
+      RawValue: -553890
+  - X:
+      RawValue: -3359880
+    Y:
+      RawValue: 172451
+  - X:
+      RawValue: -3428568
+    Y:
+      RawValue: -739495
+  - X:
+      RawValue: -3451951
+    Y:
+      RawValue: -1338690
+  - X:
+      RawValue: -2309095
+    Y:
+      RawValue: -1755204
+  - X:
+      RawValue: -2990132
+    Y:
+      RawValue: -1986114
+  - X:
+      RawValue: -80379
+    Y:
+      RawValue: -1986114
+  - X:
+      RawValue: -2320787
+    Y:
+      RawValue: 35074
+  - X:
+      RawValue: 3601019
+    Y:
+      RawValue: -287906
+  - X:
+      RawValue: 3058820
+    Y:
+      RawValue: 1420532
+  - X:
+      RawValue: 1720130
+    Y:
+      RawValue: -645962
+  - X:
+      RawValue: -3682861
+    Y:
+      RawValue: -1962731
+  - X:
+      RawValue: -3185967
+    Y:
+      RawValue: 1154547
+  - X:
+      RawValue: 2770914
+    Y:
+      RawValue: -1546217
+  - X:
+      RawValue: 3359880
+    Y:
+      RawValue: -970404
+  - X:
+      RawValue: 4168063
+    Y:
+      RawValue: 831566

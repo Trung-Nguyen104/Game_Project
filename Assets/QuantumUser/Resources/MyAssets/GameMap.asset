@@ -8602,6 +8602,8 @@ MonoBehaviour:
   - Components:
     - rid: 7109007025555636224
   - Components:
+    - rid: 4572948263128268800
+  - Components:
     - rid: 7058519528224849920
   - Components:
     - rid: 5816330568639447040
@@ -8993,6 +8995,10 @@ MonoBehaviour:
     - rid: 853025142580707328
     - rid: 853025142580707329
     - rid: 853025142580707330
+  - Components:
+    - rid: 1296183402940071936
+    - rid: 1296183402940071937
+    - rid: 1296183402940071938
   - Components:
     - rid: 1976828787555303424
     - rid: 1976828787555303425
@@ -10200,7 +10206,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -10215,7 +10221,7 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: -105468
             Y:
               RawValue: -165400
           RotationOffset:
@@ -11247,7 +11253,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -11262,9 +11268,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: 0
             Y:
-              RawValue: -165400
+              RawValue: -162607
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -11306,7 +11312,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -11321,9 +11327,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: 0
             Y:
-              RawValue: -255573
+              RawValue: -142241
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -11677,7 +11683,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -11692,9 +11698,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -231273
+              RawValue: -74884
             Y:
-              RawValue: -165400
+              RawValue: -132221
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -11765,6 +11771,58 @@ MonoBehaviour:
           Id:
             Value: 0
     - rid: 1214772415955992578
+      type: {class: PhysicsCallbacks2DPrototype, ns: Quantum.Prototypes, asm: Quantum.Engine}
+      data:
+        CallbackFlags:
+          Value: 0
+    - rid: 1296183402940071936
+      type: {class: Transform2DPrototype, ns: Quantum.Prototypes, asm: Quantum.Engine}
+      data:
+        Position:
+          X:
+            RawValue: -1023309
+          Y:
+            RawValue: 1158201
+        Rotation:
+          RawValue: 0
+    - rid: 1296183402940071937
+      type: {class: PhysicsCollider2DPrototype, ns: Quantum.Prototypes, asm: Quantum.Engine}
+      data:
+        ShapeConfig:
+          ShapeType: 4
+          PolygonCollider:
+            Id:
+              Value: 0
+          CircleRadius:
+            RawValue: 0
+          CapsuleSize:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          EdgeExtent:
+            RawValue: 0
+          BoxExtents:
+            X:
+              RawValue: 190530
+            Y:
+              RawValue: 26614
+          PositionOffset:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          RotationOffset:
+            RawValue: 0
+          UserTag: 0
+          IsPersistent: 1
+          CompoundShapes: []
+        Layer: 7
+        IsTrigger: 0
+        PhysicsMaterial:
+          Id:
+            Value: 0
+    - rid: 1296183402940071938
       type: {class: PhysicsCallbacks2DPrototype, ns: Quantum.Prototypes, asm: Quantum.Engine}
       data:
         CallbackFlags:
@@ -12620,7 +12678,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -12637,7 +12695,7 @@ MonoBehaviour:
             X:
               RawValue: -7882
             Y:
-              RawValue: -165400
+              RawValue: -98550
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -12887,7 +12945,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -12902,7 +12960,7 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: 0
             Y:
               RawValue: -165400
           RotationOffset:
@@ -13206,7 +13264,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -13221,9 +13279,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: 0
             Y:
-              RawValue: -165400
+              RawValue: -144211
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -13265,7 +13323,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 246375
           CapsuleSize:
             X:
               RawValue: 0
@@ -13280,9 +13338,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: 20967
             Y:
-              RawValue: -165400
+              RawValue: -211226
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -13480,7 +13538,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -13495,9 +13553,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -75987
+              RawValue: -52025
             Y:
-              RawValue: -267399
+              RawValue: -144211
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -13747,7 +13805,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -13762,9 +13820,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: 236317
+              RawValue: 135579
             Y:
-              RawValue: -274462
+              RawValue: -156366
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -15470,7 +15528,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -15485,9 +15543,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: 0
             Y:
-              RawValue: -165400
+              RawValue: -142241
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -16810,6 +16868,126 @@ MonoBehaviour:
       data:
         CallbackFlags:
           Value: 0
+    - rid: 4572948263128268800
+      type: {class: PlayerSpawnPositionPrototype, ns: Quantum.Prototypes, asm: Quantum.Simulation}
+      data:
+        PlayerSpawnPositions:
+          Id:
+            Value: 344805165238671461
+        WaitingPosition:
+        - Position:
+            X:
+              RawValue: -4461815
+            Y:
+              RawValue: -242601
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: -4336130
+            Y:
+              RawValue: 16075
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: -4612345
+            Y:
+              RawValue: -461819
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: -4852023
+            Y:
+              RawValue: -298136
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: -4612345
+            Y:
+              RawValue: -58458
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: -3924000
+            Y:
+              RawValue: 7307
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: -4073069
+            Y:
+              RawValue: -270368
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: -4239674
+            Y:
+              RawValue: -457434
+          isSpawned:
+            Value: 0
+        InGamePosition:
+        - Position:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          isSpawned:
+            Value: 0
+        - Position:
+            X:
+              RawValue: 0
+            Y:
+              RawValue: 0
+          isSpawned:
+            Value: 0
     - rid: 4614448990216257536
       type: {class: Transform2DPrototype, ns: Quantum.Prototypes, asm: Quantum.Engine}
       data:
@@ -17297,7 +17475,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -17312,9 +17490,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: 0
             Y:
-              RawValue: -165400
+              RawValue: -141583
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -20324,7 +20502,7 @@ MonoBehaviour:
           IsDone:
             Value: 0
         - PlayerRole:
-            Value: 2
+            Value: 0
           IsDone:
             Value: 0
     - rid: 7071116413900947456
@@ -21131,7 +21309,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -21146,9 +21324,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: 244515
+              RawValue: 110197
             Y:
-              RawValue: -165400
+              RawValue: -77197
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -21346,7 +21524,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -21361,9 +21539,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: -4887
             Y:
-              RawValue: -165400
+              RawValue: -90666
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -21925,7 +22103,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -21940,9 +22118,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: 147560
+              RawValue: 127697
             Y:
-              RawValue: -293843
+              RawValue: -135342
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -22348,7 +22526,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -22363,7 +22541,7 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -91595
+              RawValue: 0
             Y:
               RawValue: -165400
           RotationOffset:
@@ -22771,7 +22949,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -22786,9 +22964,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: -64952
             Y:
-              RawValue: -165400
+              RawValue: -149960
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -23194,7 +23372,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -23209,9 +23387,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: -7882
+              RawValue: 0
             Y:
-              RawValue: -165400
+              RawValue: -141255
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -23305,7 +23483,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 197100
           CapsuleSize:
             X:
               RawValue: 0
@@ -23320,9 +23498,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: 37521
+              RawValue: 0
             Y:
-              RawValue: -240133
+              RawValue: -131400
           RotationOffset:
             RawValue: 0
           UserTag: 0
@@ -23364,7 +23542,7 @@ MonoBehaviour:
             Id:
               Value: 0
           CircleRadius:
-            RawValue: 373669
+            RawValue: 252945
           CapsuleSize:
             X:
               RawValue: 0
@@ -23379,9 +23557,9 @@ MonoBehaviour:
               RawValue: 0
           PositionOffset:
             X:
-              RawValue: 121390
+              RawValue: 0
             Y:
-              RawValue: 126472
+              RawValue: -30715
           RotationOffset:
             RawValue: 0
           UserTag: 0

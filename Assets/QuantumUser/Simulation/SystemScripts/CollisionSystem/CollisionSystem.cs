@@ -131,7 +131,7 @@ namespace Quantum
             }
             if (!frame.Unsafe.TryGetPointer<PlayerInfo>(info.Other, out var playerInfo))
             {
-                Debug.Log("Collision Other Object");
+                Debug.Log("Bullet Hit Wall");
                 frame.Destroy(info.Entity);
                 return;
             }
@@ -141,7 +141,7 @@ namespace Quantum
             }
             else
             {
-                Debug.Log($"Collision {playerInfo->PlayerRef}");
+                Debug.Log($"Bullet Hit {playerInfo->PlayerRef}");
                 frame.Events.IsPlayerHitBullet(playerInfo->PlayerRef, bulletInfo->Damage);
                 frame.Destroy(info.Entity);
             }

@@ -1,28 +1,34 @@
+using UnityEngine;
+
 namespace Quantum
 {
     public unsafe class AutoLoadItemPosition : QuantumEntityViewComponent
     {
-        int index;
+        bool loadAllItemPosition;
+
         private void Start()
         {
-            index = 0;
+            loadAllItemPosition = false;
         }
+
         private void Update()
         {
-            if (_entityView == null)
+            if (_entityView == null || loadAllItemPosition)
             {
                 return;
             }
+
             var itemSpawner = VerifiedFrame.Get<ItemSpawner>(_entityView.EntityRef);
-            if (index < itemSpawner.Positions.Length)
+            var itemSpawnPosition = VerifiedFrame.FindAsset(itemSpawner.ItemSpawnPosition);
+
+            itemSpawnPosition.positions = new();
+
+            for (var i = 0; i < itemSpawner.Positions.Length; i++)
             {
-                var itemSpawnPosition = VerifiedFrame.FindAsset(itemSpawner.ItemSpawnPosition);
-                itemSpawnPosition.positions = new();
-                for (index = 0; index < itemSpawner.Positions.Length; index++)
-                {
-                    itemSpawnPosition.positions.Add(transform.Find($"ItemSpawnPosition - ({index})").position.ToFPVector2());
-                }
+                itemSpawnPosition.positions.Add(transform.Find($"ItemSpawnPosition - ({i})").position.ToFPVector2());
             }
+
+            loadAllItemPosition = true;
         }
     }
 }

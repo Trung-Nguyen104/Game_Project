@@ -6,7 +6,7 @@ namespace Quantum
 
     public class TaskSignalView : QuantumEntityViewComponent
     {
-        private SpriteRenderer taskSignal;
+        private SpriteRenderer[] taskSignal;
         private SpriteRenderer miniMapIcon;
         private RealtimeClient client;
         private bool isTaskCompleted;
@@ -17,9 +17,9 @@ namespace Quantum
             QuantumEvent.Subscribe(listener: this, handler: (EventInitiatingTask e) => InitiatingTask(e));
             client = QuantumRunner.Default.NetworkClient;
 
-            taskSignal = GetComponentInChildren<SpriteRenderer>();
+            taskSignal = transform.Find("TaskSignal").GetComponentsInChildren<SpriteRenderer>();
             miniMapIcon = transform.Find("MiniMapIcon").GetComponent<SpriteRenderer>();
-            taskSignal.enabled = false;
+            SetTaskSiganl(false, Color.white);
         }
 
         private void InitiatingTask(EventInitiatingTask e)
@@ -49,12 +49,11 @@ namespace Quantum
 
             if (!isTaskCompleted)
             {
-                taskSignal.color = Color.red;
-                taskSignal.enabled = e.IsEnter;
+                SetTaskSiganl(e.IsEnter, Color.red);
             }
             else
             {
-                taskSignal.enabled = false;
+                SetTaskSiganl(false, Color.white);
                 miniMapIcon.enabled = false;
             }
 
@@ -80,14 +79,23 @@ namespace Quantum
             {
                 if (isTaskCompleted)
                 {
-                    taskSignal.enabled = e.IsEnter;
+                    SetTaskSiganl(e.IsEnter, Color.white);
                     IconSkillManager.Instance.SetIconInteractable(e.IsEnter);
                 }
                 else
                 {
-                    taskSignal.enabled = false;
+                    SetTaskSiganl(false, Color.white);
                     IconSkillManager.Instance.SetIconInteractable(false);
                 }
+            }
+        }
+
+        private void SetTaskSiganl(bool enableValue, Color color)
+        {
+            foreach (var spriteRender in taskSignal)
+            {
+                spriteRender.color = color;
+                spriteRender.enabled = enableValue;
             }
         }
     }

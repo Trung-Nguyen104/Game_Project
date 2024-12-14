@@ -23,35 +23,37 @@ namespace Quantum
             var gameSession = frame.Unsafe.GetPointerSingleton<GameSession>();
             var playerTransform = filter.Transform;
 
-            SetUpPlayer(frame, filter, gameSession, playerData, playerTransform);
+            SetUpPlayerStatus(frame, filter, gameSession, playerData);
+            if (gameSession->GameState == GameState.GameStarting || gameSession->GameState == GameState.GameEnding)
+            {
+                filter.MousePointerInfo->AimAngle = 0;
+                return;
+            }
+
+            HandlePlayerDeath(frame, filter, playerData);
+            PlayerMovement(frame, filter, playerData, input);
+            AimController(filter, input);
+        }
+
+        private static void HandlePlayerDeath(Frame frame, Filter filter, RuntimePlayer playerData)
+        {
             if (playerData.CurrHealth <= 0)
             {
                 filter.Collider->Enabled = false;
                 frame.Events.IsPlayerDeaded(filter.PlayerInfo->PlayerRef, true);
                 return;
             }
-            if (gameSession->GameState == GameState.GameStarting || gameSession->GameState == GameState.GameEnding)
-            {
-                filter.MousePointerInfo->AimAngle = 0;
-                return;
-            }
-            PlayerMovement(frame, filter, playerData, input);
-            AimController(filter, input);
         }
 
-        private void SetUpPlayer(Frame frame, Filter filter, GameSession* gameSession, RuntimePlayer playerData, Transform2D* playerTransform)
+        private void SetUpPlayerStatus(Frame frame, Filter filter, GameSession* gameSession, RuntimePlayer playerData)
         {
-            if (gameSession->GameState == GameState.GameStarting)
-            {
-                TeleportPlayerToPosition(0, 0, playerTransform);
-            }
             if (gameSession->GameState == GameState.GameEnding)
             {
                 playerData.CurrHealth = playerData.MaxHealth;
                 playerData.IsMonsterKill = false;
+                playerData.IsSoldierDeaded = false;
                 filter.Collider->Enabled = true;
                 frame.Events.IsPlayerDeaded(filter.PlayerInfo->PlayerRef, false);
-                TeleportPlayerToPosition(-63, -4, playerTransform);
             }
         }
 

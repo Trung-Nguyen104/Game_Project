@@ -28,12 +28,14 @@ namespace Quantum
             playerData = VerifiedFrame.GetPlayerData(playerInfo.PlayerRef);
             gameSession = VerifiedFrame.GetSingleton<GameSession>();
             InventoryHandler();
+            HandleGunAmmo(playerInfo.CurrSelectItem);
         }
 
         private bool CheckPlayerLocal() => QuantumRunner.DefaultGame.PlayerIsLocal(playerInfo.PlayerRef);
         private GameObject FindWeaponObject(string itemName) => transform.Find("Aim/" + itemName).gameObject;
         private GameObject FindHealObject(string itemName) => transform.Find("Animator/Hand/" + itemName).gameObject;
-        private ItemData GetItemData(int index) => VerifiedFrame.FindAsset(playerInfo.Inventory[index].Item.ItemData);
+        private ItemData GetItemData(ItemProfile itemProfile) => VerifiedFrame.FindAsset(itemProfile.ItemData);
+        private ItemProfile GetCurrItemProfile(int playerInventoryIndex) => playerInfo.Inventory[playerInventoryIndex].Item;
 
         private void AddItemSlotEvent(EventPickUpItem e)
         {
@@ -65,12 +67,12 @@ namespace Quantum
         {
             if (e.PlayerRef == playerInfo.PlayerRef)
             {
-                ItemSetActive(GetItemData(e.SelectItem), true);
+                ItemSetActive(GetItemData(GetCurrItemProfile(e.SelectItem)), true);
                 for(int i = 0 ; i < playerInfo.Inventory.Length ; i++)
                 {
-                    if(i != e.SelectItem && playerInfo.Inventory[e.SelectItem].Item.ItemPrototype != playerInfo.Inventory[i].Item.ItemPrototype)
+                    if(i != e.SelectItem && GetCurrItemProfile(e.SelectItem).ItemPrototype != GetCurrItemProfile(i).ItemPrototype)
                     {
-                        ItemSetActive(GetItemData(i), false);
+                        ItemSetActive(GetItemData(GetCurrItemProfile(i)), false);
                     }
                 }
                 if (CheckPlayerLocal() && itemSlots[e.SelectItem].IsFull)
@@ -114,6 +116,25 @@ namespace Quantum
             else
             {
                 SetActiveInventory(true);
+            }
+        }
+
+        private void HandleGunAmmo(int currSelectItem)
+        {
+            if (!CheckPlayerLocal() || currSelectItem < 0)
+            {
+                return;
+            }
+            var itemInfo = playerInfo.Inventory[currSelectItem];
+            var gunAmmoStats = PlayerUIController.Instance.GunAmmoStats;
+            if (itemInfo.BulletPrototype != null)
+            {
+                gunAmmoStats.EnableAmmoStats(true);
+                gunAmmoStats.SetAmmoValue(itemInfo.CurrentAmmo, GetItemData(itemInfo.Item).maxAmmo.AsInt);
+            }
+            else
+            {
+                gunAmmoStats.EnableAmmoStats(false);
             }
         }
 

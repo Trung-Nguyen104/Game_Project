@@ -20,6 +20,13 @@ namespace Quantum
             var gameSession = frame.GetSingleton<GameSession>();
 
             ResetTimerCooldown(gameSession, playerData);
+            SendEventSkillisCoolingDown(frame, filter, playerData);
+            HandleImmunityStatus(frame, playerData);
+            HandlePlayerRoleBehaviour(frame, filter, playerData);
+        }
+
+        private void SendEventSkillisCoolingDown(Frame frame, Filter filter, RuntimePlayer playerData)
+        {
             if (playerData.SkillTimer > 0)
             {
                 frame.Events.IsCoolDown(filter.PlayerInfo->PlayerRef, true);
@@ -28,8 +35,6 @@ namespace Quantum
             {
                 frame.Events.IsCoolDown(filter.PlayerInfo->PlayerRef, false);
             }
-            HandleImmunityStatus(frame, playerData);
-            HandlePlayerRoleBehaviour(frame, filter , playerData);
         }
 
         private void ResetTimerCooldown(GameSession gameSession, RuntimePlayer playerData)
@@ -70,6 +75,7 @@ namespace Quantum
                     Cooldown(frame, ref playerData.SkillTimer);
                     break;
                 case PlayerRole.Soldier:
+                    Cooldown(frame, ref playerData.SkillTimer);
                     SoldierBehaviour(frame, filter, playerData);
                     break;
             }
@@ -90,20 +96,21 @@ namespace Quantum
 
         private void SoldierBehaviour(Frame frame, Filter filter, RuntimePlayer playerData)
         {
-            if (playerData.CurrHealth > 0)
+            if (playerData.CurrHealth > 0 || playerData.IsMonsterKill || playerData.IsSoldierDeaded)
             {
                 return;
             }
-            if (!playerData.IsMonsterKill)
+           
+            if (playerData.SkillTimer > 0)
             {
-                Cooldown(frame, ref playerData.SkillTimer);
-                if (playerData.SkillTimer <= 0)
-                {
-                    playerData.CurrHealth = playerData.MaxHealth / 2;
-                    filter.Collider->Enabled = true;
-                    frame.Events.IsPlayerDeaded(filter.PlayerInfo->PlayerRef, false);
-                }
+                playerData.IsSoldierDeaded = true;
+                return;
             }
+
+            playerData.SkillTimer = 18;
+            filter.Collider->Enabled = true;
+            playerData.CurrHealth = playerData.MaxHealth / 2;
+            frame.Events.IsPlayerDeaded(filter.PlayerInfo->PlayerRef, false);
         }
 
         public void OnMonsterKill(Frame frame, EntityRef TargetRef)

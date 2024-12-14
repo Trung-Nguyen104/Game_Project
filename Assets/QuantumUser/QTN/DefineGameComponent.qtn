@@ -62,21 +62,28 @@ component BulletInfo
 	bool IsFirstTouching;
 }
 
-singleton component PlayerRoleManager
-{
-	RNGSession RNGValue;
-	array<RoleProfile>[8] RoleProfiles;
-}
-
 component TaskInfo
 {
 	TaskType TaskType;
 	bool IsTaskCompleted;
 }
 
+singleton component PlayerRoleManager
+{
+	RNGSession RNGValue;
+	array<RoleProfile>[8] RoleProfiles;
+}
+
 singleton component GameSession
 {	
 	GameState GameState;
+}
+
+singleton component PlayerSpawnPosition
+{
+	AssetRef<PlayerSpawnPositions> PlayerSpawnPositions;
+	array<Positions>[8] WaitingPosition;
+	array<Positions>[8] InGamePosition;
 }
 
 struct Positions

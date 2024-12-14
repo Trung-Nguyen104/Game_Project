@@ -2,6 +2,7 @@ using Photon.Client;
 using Photon.Realtime;
 using Quantum;
 using System;
+using TMPro;
 using UnityEngine;
 
 enum RoleBehavior : byte
@@ -13,6 +14,7 @@ enum RoleBehavior : byte
 public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
 {
     public UnityEngine.LayerMask layerMask;
+    public TMP_Text textRolePlayer;
     public PlayerRef PlayerRef { get; private set; }
     public RuntimePlayer PlayerData { get; private set; }
     public SpriteRenderer SpriteRenderer { get; set; }
@@ -20,6 +22,7 @@ public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
     private RealtimeClient client;
     private Transform playerTransform;
     private PlayerTargetView doctorTargeting;
+    private PlayerTargetView detectiveTargeting;
     private Ray ray;
     private RaycastHit2D hitInfo;
     private PlayerInfo playerInfo;
@@ -32,6 +35,7 @@ public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
         playerTransform = transform;
         client = QuantumRunner.Default?.NetworkClient;
         client.AddCallbackTarget(this);
+        textRolePlayer.gameObject.SetActive(false);
     }
 
     private void IsCoolDown(EventIsCoolDown e)
@@ -54,8 +58,6 @@ public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
             return;
         }
 
-        RemoveDoctorTarget();
-
         if (!CheckLocalPlayer() || PlayerData.PlayerRole == PlayerRole.Astronaut || PlayerData.PlayerRole == PlayerRole.None)
         {
             return;
@@ -63,7 +65,10 @@ public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
 
         ray = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
         hitInfo = Physics2D.Raycast(ray.origin, ray.direction, 100, layerMask);
+
         HandlePlayerRoleTarget();
+        RemoveDoctorTarget();
+        RemoveDetectiveTarget();
     }
 
     private void HandlePlayerRoleTarget()
@@ -123,16 +128,17 @@ public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
 
     private void RemoveDoctorTarget()
     {
-        if (doctorTargeting != null)
+        if (doctorTargeting == null)
         {
-            if (doctorTargeting.PlayerData.IsImmunity)
-            {
-                doctorTargeting.SpriteRenderer.color = Color.green;
-            }
-            else
-            {
-                doctorTargeting.SpriteRenderer.color = Color.white;
-            }
+            return;
+        }
+        if (doctorTargeting.PlayerData.IsImmunity)
+        {
+            doctorTargeting.SpriteRenderer.color = Color.green;
+        }
+        else
+        {
+            doctorTargeting.SpriteRenderer.color = Color.white;
         }
     }
 
@@ -143,9 +149,22 @@ public class PlayerTargetView : QuantumEntityViewComponent, IOnEventCallback
 
         if (CheckUseSkillInput())
         {
-            Debug.Log($"{PlayerData.PlayerRole} detect");
-            Debug.Log(playerTarget.PlayerData.PlayerRole);
+            detectiveTargeting = playerTarget;
+            detectiveTargeting.textRolePlayer.text = $"{playerTarget.PlayerData.PlayerRole}";
+            detectiveTargeting.textRolePlayer.gameObject.SetActive(true);
             PlayerData.SkillTimer = 30;
+        }
+    }
+
+    private void RemoveDetectiveTarget()
+    {
+        if (detectiveTargeting == null || PlayerData.PlayerRole != PlayerRole.Detective)
+        {
+            return;
+        }
+        if (PlayerData.SkillTimer <= 0)
+        {
+            detectiveTargeting.textRolePlayer.gameObject.SetActive(false);
         }
     }
 

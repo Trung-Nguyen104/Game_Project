@@ -877,6 +877,44 @@ namespace Quantum {
     }
   }
   [StructLayout(LayoutKind.Explicit)]
+  public unsafe partial struct PlayerSpawnPosition : Quantum.IComponentSingleton {
+    public const Int32 SIZE = 392;
+    public const Int32 ALIGNMENT = 8;
+    [FieldOffset(0)]
+    public AssetRef<PlayerSpawnPositions> PlayerSpawnPositions;
+    [FieldOffset(200)]
+    [FramePrinter.FixedArrayAttribute(typeof(Positions), 8)]
+    private fixed Byte _WaitingPosition_[192];
+    [FieldOffset(8)]
+    [FramePrinter.FixedArrayAttribute(typeof(Positions), 8)]
+    private fixed Byte _InGamePosition_[192];
+    public FixedArray<Positions> WaitingPosition {
+      get {
+        fixed (byte* p = _WaitingPosition_) { return new FixedArray<Positions>(p, 24, 8); }
+      }
+    }
+    public FixedArray<Positions> InGamePosition {
+      get {
+        fixed (byte* p = _InGamePosition_) { return new FixedArray<Positions>(p, 24, 8); }
+      }
+    }
+    public override Int32 GetHashCode() {
+      unchecked { 
+        var hash = 14821;
+        hash = hash * 31 + PlayerSpawnPositions.GetHashCode();
+        hash = hash * 31 + HashCodeUtils.GetArrayHashCode(WaitingPosition);
+        hash = hash * 31 + HashCodeUtils.GetArrayHashCode(InGamePosition);
+        return hash;
+      }
+    }
+    public static void Serialize(void* ptr, FrameSerializer serializer) {
+        var p = (PlayerSpawnPosition*)ptr;
+        AssetRef.Serialize(&p->PlayerSpawnPositions, serializer);
+        FixedArray.Serialize(p->InGamePosition, serializer, Statics.SerializePositions);
+        FixedArray.Serialize(p->WaitingPosition, serializer, Statics.SerializePositions);
+    }
+  }
+  [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct TaskInfo : Quantum.IComponent {
     public const Int32 SIZE = 8;
     public const Int32 ALIGNMENT = 4;
@@ -989,6 +1027,8 @@ namespace Quantum {
       BuildSignalsArrayOnComponentRemoved<Quantum.PlayerInfo>();
       BuildSignalsArrayOnComponentAdded<Quantum.PlayerRoleManager>();
       BuildSignalsArrayOnComponentRemoved<Quantum.PlayerRoleManager>();
+      BuildSignalsArrayOnComponentAdded<Quantum.PlayerSpawnPosition>();
+      BuildSignalsArrayOnComponentRemoved<Quantum.PlayerSpawnPosition>();
       BuildSignalsArrayOnComponentAdded<Quantum.TaskInfo>();
       BuildSignalsArrayOnComponentRemoved<Quantum.TaskInfo>();
       BuildSignalsArrayOnComponentAdded<Transform2D>();
@@ -1174,6 +1214,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(PlayerRef), PlayerRef.SIZE);
       typeRegistry.Register(typeof(Quantum.PlayerRole), 4);
       typeRegistry.Register(typeof(Quantum.PlayerRoleManager), Quantum.PlayerRoleManager.SIZE);
+      typeRegistry.Register(typeof(Quantum.PlayerSpawnPosition), Quantum.PlayerSpawnPosition.SIZE);
       typeRegistry.Register(typeof(Quantum.Positions), Quantum.Positions.SIZE);
       typeRegistry.Register(typeof(Ptr), Ptr.SIZE);
       typeRegistry.Register(typeof(QBoolean), QBoolean.SIZE);
@@ -1194,7 +1235,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(Quantum._globals_), Quantum._globals_.SIZE);
     }
     static partial void InitComponentTypeIdGen() {
-      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 8)
+      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 9)
         .AddBuiltInComponents()
         .Add<Quantum.BulletInfo>(Quantum.BulletInfo.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.GameSession>(Quantum.GameSession.Serialize, null, null, ComponentFlags.Singleton)
@@ -1203,6 +1244,7 @@ namespace Quantum {
         .Add<Quantum.MousePointerInfo>(Quantum.MousePointerInfo.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.PlayerInfo>(Quantum.PlayerInfo.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.PlayerRoleManager>(Quantum.PlayerRoleManager.Serialize, null, null, ComponentFlags.Singleton)
+        .Add<Quantum.PlayerSpawnPosition>(Quantum.PlayerSpawnPosition.Serialize, null, null, ComponentFlags.Singleton)
         .Add<Quantum.TaskInfo>(Quantum.TaskInfo.Serialize, null, null, ComponentFlags.None)
         .Finish();
     }

@@ -11,6 +11,8 @@ namespace Quantum
         private Transform2D transform2D;
         private Vector3 animatorOriginalPosition;
         private Quaternion animatorOriginalRotation;
+        private ItemData itemData;
+
         private bool FacingLeft { get; set; } = true;
 
         private void Start()
@@ -27,22 +29,25 @@ namespace Quantum
             playerInfo = VerifiedFrame.Get<PlayerInfo>(_entityView.EntityRef);
             playerData = VerifiedFrame.GetPlayerData(playerInfo.PlayerRef);
             transform2D = VerifiedFrame.Get<Transform2D>(_entityView.EntityRef);
+            if (playerInfo.CurrSelectItem >= 0)
+            {
+                VerifiedFrame.TryFindAsset(playerInfo.Inventory[playerInfo.CurrSelectItem].Item.ItemData, out itemData);
+            }
             RotationController();
         }
 
         private void RotationController()
         {
-            if (playerInfo.CurrSelectItem >= 0 && VerifiedFrame.TryFindAsset(playerInfo.Inventory[playerInfo.CurrSelectItem].Item.ItemData, out var itemData))
+            if (itemData != null && itemData.itemType == ItemType.Weapon)
             {
-                if (itemData.itemType == ItemType.Weapon)
-                {
-                    var mouseXPosition = VerifiedFrame.GetPlayerInput(playerInfo.PlayerRef)->MousePosition.X;
-                    RotationWithMousePosition(mouseXPosition);
-                }
-                return;
+                var mouseXPosition = VerifiedFrame.GetPlayerInput(playerInfo.PlayerRef)->MousePosition.X;
+                RotationWithMousePosition(mouseXPosition);
             }
-            var physicsBody2D = VerifiedFrame.Get<PhysicsBody2D>(_entityView.EntityRef);
-            RotationWithVelocity(physicsBody2D.Velocity.X);
+            else
+            {
+                var physicsBody2D = VerifiedFrame.Get<PhysicsBody2D>(_entityView.EntityRef);
+                RotationWithVelocity(physicsBody2D.Velocity.X);
+            }
         }
 
         private void IsPlayerDeaded(EventIsPlayerDeaded e)
