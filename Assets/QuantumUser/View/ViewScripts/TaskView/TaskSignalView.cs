@@ -67,7 +67,7 @@ namespace Quantum
             {
                 return;
             }
-            client.OpRaiseEvent((byte)TaskEventCode.TaskBeDestroy, e.TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            QuantumRunner.DefaultGame.SendCommand(new CompletedTaskCommands() { taskRef = e.TaskRef, taskCompleted = false });
             Debug.Log($"{playerData.PlayerRole} destroy");
             playerData.SkillTimer = 20;
         }

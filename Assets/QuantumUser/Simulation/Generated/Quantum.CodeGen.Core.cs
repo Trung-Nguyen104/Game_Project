@@ -529,18 +529,18 @@ namespace Quantum {
     [FieldOffset(8)]
     public ItemProfile ItemProfile;
     [FieldOffset(0)]
-    public Int32 ItemQuantity;
+    public Int32 SpawnedQuantity;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 751;
         hash = hash * 31 + ItemProfile.GetHashCode();
-        hash = hash * 31 + ItemQuantity.GetHashCode();
+        hash = hash * 31 + SpawnedQuantity.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (ItemSpawn*)ptr;
-        serializer.Stream.Serialize(&p->ItemQuantity);
+        serializer.Stream.Serialize(&p->SpawnedQuantity);
         Quantum.ItemProfile.Serialize(&p->ItemProfile, serializer);
     }
   }
@@ -850,29 +850,29 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct PlayerRoleManager : Quantum.IComponentSingleton {
-    public const Int32 SIZE = 80;
+    public const Int32 SIZE = 72;
     public const Int32 ALIGNMENT = 8;
-    [FieldOffset(64)]
+    [FieldOffset(56)]
     public RNGSession RNGValue;
     [FieldOffset(0)]
-    [FramePrinter.FixedArrayAttribute(typeof(RoleProfile), 8)]
-    private fixed Byte _RoleProfiles_[64];
-    public FixedArray<RoleProfile> RoleProfiles {
+    [FramePrinter.FixedArrayAttribute(typeof(RoleProfile), 7)]
+    private fixed Byte _ListRoles_[56];
+    public FixedArray<RoleProfile> ListRoles {
       get {
-        fixed (byte* p = _RoleProfiles_) { return new FixedArray<RoleProfile>(p, 8, 8); }
+        fixed (byte* p = _ListRoles_) { return new FixedArray<RoleProfile>(p, 8, 7); }
       }
     }
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 2447;
         hash = hash * 31 + RNGValue.GetHashCode();
-        hash = hash * 31 + HashCodeUtils.GetArrayHashCode(RoleProfiles);
+        hash = hash * 31 + HashCodeUtils.GetArrayHashCode(ListRoles);
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (PlayerRoleManager*)ptr;
-        FixedArray.Serialize(p->RoleProfiles, serializer, Statics.SerializeRoleProfile);
+        FixedArray.Serialize(p->ListRoles, serializer, Statics.SerializeRoleProfile);
         RNGSession.Serialize(&p->RNGValue, serializer);
     }
   }

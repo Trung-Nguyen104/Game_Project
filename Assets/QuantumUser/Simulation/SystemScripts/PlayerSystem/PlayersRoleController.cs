@@ -22,8 +22,7 @@ namespace Quantum
 
         private void HandleGameSession(Frame frame, Filter filter, GameSession* gameSession)
         {
-            var roleProfiles = filter.RoleManager->RoleProfiles;
-
+            var listRoles = filter.RoleManager->ListRoles;
             if (gameSession->GameState == GameState.Waiting)
             {
                 return;
@@ -41,30 +40,30 @@ namespace Quantum
         private void SetUpPlayersRole(Frame frame, Filter filter)
         {
             var listPlayerEntityRef = frame.ResolveList(frame.Global->playerEntityRefList);
-            var roleProfiles = filter.RoleManager->RoleProfiles;
+            var listRoles = filter.RoleManager->ListRoles;
             for (int i = 0; i < listPlayerEntityRef.Count; i++)
             {
                 var playerInfo = frame.Unsafe.GetPointer<PlayerInfo>(listPlayerEntityRef[i]);
                 var playerData = frame.GetPlayerData(playerInfo->PlayerRef);
-                HandleRandomRole(frame, filter, playerData, roleProfiles);
+                HandleRandomRole(frame, filter, playerData, listRoles);
             }
         }
 
-        private void HandleRandomRole(Frame frame, Filter filter, RuntimePlayer playerData, FixedArray<RoleProfile> roleProfiles)
+        private void HandleRandomRole(Frame frame, Filter filter, RuntimePlayer playerData, FixedArray<RoleProfile> listRoles)
         {
             while (playerData.PlayerRole == PlayerRole.None)
             {
-                var randomRole = filter.RoleManager->RNGValue.Next(0, roleProfiles.Length);
-                if (!roleProfiles[randomRole].IsDone)
+                var randomRole = filter.RoleManager->RNGValue.Next(0, listRoles.Length);
+                if (!listRoles[randomRole].IsDone)
                 {
-                    playerData.PlayerRole = roleProfiles[randomRole].PlayerRole;
+                    playerData.PlayerRole = listRoles[randomRole].PlayerRole;
                 }
             }
-            for (int i = 0; i < filter.RoleManager->RoleProfiles.Length; i++)
+            for (int i = 0; i < filter.RoleManager->ListRoles.Length; i++)
             {
-                if (roleProfiles[i].PlayerRole == playerData.PlayerRole)
+                if (listRoles[i].PlayerRole == playerData.PlayerRole)
                 {
-                    roleProfiles[i].IsDone = true;
+                    listRoles[i].IsDone = true;
                 }
             }
         }
@@ -78,7 +77,7 @@ namespace Quantum
                 var playerData = frame.GetPlayerData(playerInfo->PlayerRef);
                 playerData.PlayerRole = PlayerRole.None;
             }
-            var roleProfiles = filter.RoleManager->RoleProfiles;
+            var roleProfiles = filter.RoleManager->ListRoles;
             for (int i = 0; i < roleProfiles.Length; i++)
             {
                 roleProfiles[i].IsDone = false;

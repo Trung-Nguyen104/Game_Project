@@ -69,8 +69,8 @@ namespace Quantum
 
             for (int i = 0; i < listItem.Length; i++)
             {
-                var itemData = frame.FindAsset(filter.ItemSpawner->Item[i].ItemProfile.ItemData);
-                while (listItem[i].ItemQuantity < itemData.itemQuantity)
+                var itemQuantity = frame.FindAsset(listItem[i].ItemProfile.ItemData).itemQuantity;
+                while (listItem[i].SpawnedQuantity < itemQuantity)
                 {
                     var randomPosition = filter.ItemSpawner->RNGValue.Next(0, listItemSpawnPosition.Length);
                     if (!listItemSpawnPosition[randomPosition].isSpawned)
@@ -81,7 +81,7 @@ namespace Quantum
 
                         itemTransform->Rotation = filter.ItemSpawner->RNGValue.Next(-(FP)45, (FP)45);
                         itemTransform->Position = listItemSpawnPosition[randomPosition].Position;
-                        listItem[i].ItemQuantity += 1;
+                        listItem[i].SpawnedQuantity += 1;
                         listItemSpawnPosition[randomPosition].isSpawned = true;
                         listItemEntityRef.Add(itemEnityRef);
                     }
@@ -94,7 +94,7 @@ namespace Quantum
             var listItemEntityRef = frame.ResolveList(frame.Global->listItemEntityRef);
             for (int i = 0; i < filter.ItemSpawner->Item.Length; i++)
             {
-                filter.ItemSpawner->Item[i].ItemQuantity = 0;
+                filter.ItemSpawner->Item[i].SpawnedQuantity = 0;
             }
             for (int i = 0; i < filter.ItemSpawner->Positions.Length; i++)
             {
@@ -117,7 +117,7 @@ namespace Quantum
                 timeCounter -= frame.DeltaTime;
                 if (timeCounter < 0)
                 {
-                    filter.ItemSpawner->Item[index].ItemQuantity -= 1;
+                    filter.ItemSpawner->Item[index].SpawnedQuantity -= 1;
                     canCounter = false;
                 }
             }

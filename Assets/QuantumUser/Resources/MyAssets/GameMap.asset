@@ -18624,7 +18624,7 @@ MonoBehaviour:
             ItemPrototype:
               Id:
                 Value: 1329928741630211792
-          ItemQuantity: 0
+          SpawnedQuantity: 0
         - ItemProfile:
             ItemData:
               Id:
@@ -18632,15 +18632,15 @@ MonoBehaviour:
             ItemPrototype:
               Id:
                 Value: 1403279799703237569
-          ItemQuantity: 0
+          SpawnedQuantity: 0
         - ItemProfile:
             ItemData:
               Id:
-                Value: 456845861006088718
+                Value: 270941481925982608
             ItemPrototype:
               Id:
-                Value: 1524444612306742547
-          ItemQuantity: 0
+                Value: 1480913065408654489
+          SpawnedQuantity: 0
         - ItemProfile:
             ItemData:
               Id:
@@ -18648,7 +18648,7 @@ MonoBehaviour:
             ItemPrototype:
               Id:
                 Value: 1481347040074078219
-          ItemQuantity: 0
+          SpawnedQuantity: 0
     - rid: 5893955434577920000
       type: {class: Transform2DPrototype, ns: Quantum.Prototypes, asm: Quantum.Engine}
       data:
@@ -20472,21 +20472,21 @@ MonoBehaviour:
     - rid: 7058519528224849920
       type: {class: PlayerRoleManagerPrototype, ns: Quantum.Prototypes, asm: Quantum.Simulation}
       data:
-        RoleProfiles:
-        - PlayerRole:
-            Value: 3
-          IsDone:
-            Value: 0
-        - PlayerRole:
-            Value: 5
-          IsDone:
-            Value: 0
+        ListRoles:
         - PlayerRole:
             Value: 1
           IsDone:
             Value: 0
         - PlayerRole:
+            Value: 3
+          IsDone:
+            Value: 0
+        - PlayerRole:
             Value: 4
+          IsDone:
+            Value: 0
+        - PlayerRole:
+            Value: 5
           IsDone:
             Value: 0
         - PlayerRole:
@@ -20499,10 +20499,6 @@ MonoBehaviour:
             Value: 0
         - PlayerRole:
             Value: 8
-          IsDone:
-            Value: 0
-        - PlayerRole:
-            Value: 0
           IsDone:
             Value: 0
     - rid: 7071116413900947456

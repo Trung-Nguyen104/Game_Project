@@ -1,7 +1,5 @@
 namespace Quantum
 {
-    using UnityEditor;
-    using UnityEngine;
     using UnityEngine.Scripting;
 
     [Preserve]
@@ -11,7 +9,6 @@ namespace Quantum
         {
             public EntityRef Entity;
             public PlayerInfo* PlayerInfo;
-            public Transform2D* Transform;
         }
 
         public override void Update(Frame frame, ref Filter filter)

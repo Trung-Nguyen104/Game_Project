@@ -11,8 +11,11 @@ namespace Quantum
             {
                 var changeGameState = frame.GetPlayerCommand(i) as ChangeGameStateCommads;
                 var changeSeed = frame.GetPlayerCommand(i) as ChangeSeedCommads;
+                var completedTask = frame.GetPlayerCommand(i) as CompletedTaskCommands;
+
                 changeGameState?.Execute(frame);
                 changeSeed?.Execute(frame);
+                completedTask?.Execute(frame);
             }
         }
     }

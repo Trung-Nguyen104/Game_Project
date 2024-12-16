@@ -59,7 +59,7 @@ public class RememberIndexsTask : MonoBehaviour
     {
         taskStatus.text = "Task Completed !!";
         var client = QuantumRunner.Default.NetworkClient;
-        client.OpRaiseEvent((byte)TaskEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        QuantumRunner.DefaultGame.SendCommand(new CompletedTaskCommands() { taskRef = TaskRef, taskCompleted = true });
         CloseTask();
     }
 

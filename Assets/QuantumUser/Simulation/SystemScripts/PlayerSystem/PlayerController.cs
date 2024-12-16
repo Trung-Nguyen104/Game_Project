@@ -77,10 +77,5 @@ namespace Quantum
                 frame.Events.IsMoving(filter.PlayerInfo->PlayerRef, false);
             }
         }
-
-        private void TeleportPlayerToPosition(int x, int y, Transform2D* playerTransform)
-        {
-            playerTransform->Position = new FPVector2(x, y);
-        }
     }
 }

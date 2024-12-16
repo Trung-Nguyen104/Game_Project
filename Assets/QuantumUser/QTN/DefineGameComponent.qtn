@@ -71,7 +71,7 @@ component TaskInfo
 singleton component PlayerRoleManager
 {
 	RNGSession RNGValue;
-	array<RoleProfile>[8] RoleProfiles;
+	array<RoleProfile>[7] ListRoles;
 }
 
 singleton component GameSession
@@ -95,7 +95,7 @@ struct Positions
 struct ItemSpawn
 {
 	ItemProfile ItemProfile;
-	Int32 ItemQuantity;
+	Int32 SpawnedQuantity;
 }
 
 struct ItemProfile

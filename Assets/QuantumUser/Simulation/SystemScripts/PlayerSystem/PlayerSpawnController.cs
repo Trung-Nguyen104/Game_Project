@@ -89,11 +89,11 @@ namespace Quantum
         public void OnPlayerAdded(Frame frame, PlayerRef player, bool firstTime)
         {
             var playerData = frame.GetPlayerData(player);
-            var playerEntityRef = frame.Create(playerData.PlayerAvatar);
+            var playerEntityRef = frame.Create(playerData.PlayerAvatar); //Create Player Entity
             var playerInfo = frame.Unsafe.GetPointer<PlayerInfo>(playerEntityRef);
             var playerTransform = frame.Unsafe.GetPointer<Transform2D>(playerEntityRef);
 
-
+            //Random Skin Color
             if (!playerData.HaveRandomSkin)
             {
                 playerData.SkinColor = frame.RNG->Next(0, 5);
@@ -103,8 +103,10 @@ namespace Quantum
             playerData.CurrHealth = playerData.MaxHealth;
             playerInfo->PlayerRef = player;
             playerInfo->PlayerSkinColor = playerData.SkinColor;
+            //Set Start Position
             playerTransform->Position = waitingPosition[playerInfo->PlayerRef].Position;
 
+            //Add Player To List<EntityRef>
             frame.ResolveList(frame.Global->playerEntityRefList).Add(playerEntityRef);
         }
 

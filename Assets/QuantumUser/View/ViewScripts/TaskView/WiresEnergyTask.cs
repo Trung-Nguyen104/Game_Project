@@ -84,7 +84,7 @@ public class WiresEnergyTask : MonoBehaviour
 
         statusText.text = "Task Completed: DONE!";
         var client = QuantumRunner.Default.NetworkClient;
-        client.OpRaiseEvent((byte)TaskEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        QuantumRunner.DefaultGame.SendCommand(new CompletedTaskCommands() { taskRef = TaskRef, taskCompleted = true });
         CloseTask();
     }
 
@@ -98,9 +98,7 @@ public class WiresEnergyTask : MonoBehaviour
         for (int i = 0; i < list.Count; i++)
         {
             int randomIndex = Random.Range(0, list.Count);
-            var temp = list[i];
-            list[i] = list[randomIndex];
-            list[randomIndex] = temp;
+            (list[randomIndex], list[i]) = (list[i], list[randomIndex]);
         }
     }
 

@@ -87,7 +87,7 @@ public class EnterCodesTask : MonoBehaviour
     private void CompleteTask()
     {
         var client = QuantumRunner.Default.NetworkClient;
-        client.OpRaiseEvent((byte)TaskEventCode.TaskCompleted, TaskRef.ToString(), new RaiseEventArgs { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        QuantumRunner.DefaultGame.SendCommand(new CompletedTaskCommands() { taskRef = TaskRef, taskCompleted = true });
         CloseTask();
     }
 

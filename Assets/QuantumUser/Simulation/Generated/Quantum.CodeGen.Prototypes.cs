@@ -149,11 +149,11 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.ItemSpawn))]
   public unsafe partial class ItemSpawnPrototype : StructPrototype {
     public Quantum.Prototypes.ItemProfilePrototype ItemProfile;
-    public Int32 ItemQuantity;
+    public Int32 SpawnedQuantity;
     partial void MaterializeUser(Frame frame, ref Quantum.ItemSpawn result, in PrototypeMaterializationContext context);
     public void Materialize(Frame frame, ref Quantum.ItemSpawn result, in PrototypeMaterializationContext context = default) {
         this.ItemProfile.Materialize(frame, ref result.ItemProfile, in context);
-        result.ItemQuantity = this.ItemQuantity;
+        result.SpawnedQuantity = this.SpawnedQuantity;
         MaterializeUser(frame, ref result, in context);
     }
   }
@@ -232,8 +232,8 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.PlayerRoleManager))]
   public unsafe partial class PlayerRoleManagerPrototype : ComponentPrototype<Quantum.PlayerRoleManager> {
     public RNGSession RNGValue;
-    [ArrayLengthAttribute(8)]
-    public Quantum.Prototypes.RoleProfilePrototype[] RoleProfiles = new Quantum.Prototypes.RoleProfilePrototype[8];
+    [ArrayLengthAttribute(7)]
+    public Quantum.Prototypes.RoleProfilePrototype[] ListRoles = new Quantum.Prototypes.RoleProfilePrototype[7];
     partial void MaterializeUser(Frame frame, ref Quantum.PlayerRoleManager result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.PlayerRoleManager component = default;
@@ -242,8 +242,8 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.PlayerRoleManager result, in PrototypeMaterializationContext context = default) {
         result.RNGValue = this.RNGValue;
-        for (int i = 0, count = PrototypeValidator.CheckLength(RoleProfiles, 8, in context); i < count; ++i) {
-          this.RoleProfiles[i].Materialize(frame, ref *result.RoleProfiles.GetPointer(i), in context);
+        for (int i = 0, count = PrototypeValidator.CheckLength(ListRoles, 7, in context); i < count; ++i) {
+          this.ListRoles[i].Materialize(frame, ref *result.ListRoles.GetPointer(i), in context);
         }
         MaterializeUser(frame, ref result, in context);
     }
